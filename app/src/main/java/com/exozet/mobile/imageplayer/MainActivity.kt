@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         with(fps) {
             adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
-            setSelection(23)
+            setSelection(29)
         }
 
         with(videos) {
