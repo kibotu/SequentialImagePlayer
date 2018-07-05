@@ -104,7 +104,6 @@ class MainActivity : AppCompatActivity() {
 
         init {
             index = imageVideo.min
-            activity.seekBar.max = imageVideo.max
         }
 
         override fun run() {
@@ -113,12 +112,13 @@ class MainActivity : AppCompatActivity() {
 
             index = loopRange(index)
 
-            Log("run with ${formatFileName(index % imageVideo.max)}.png")
+            Log("playing ${formatFileName(index % imageVideo.max)}")
 
             activity.viewHolder.setImageBitmap(activity.getBitmapFromAsset(formatFileName(index % imageVideo.max)))
 
             activity.viewHolder.postDelayed(this, (1000 / activity.fps.selectedItemPosition.toFloat()).roundToLong())
 
+            activity.seekBar.max = imageVideo.max
             activity.seekBar.progress = index
         }
     }
