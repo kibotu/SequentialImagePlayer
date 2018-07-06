@@ -1,11 +1,13 @@
 package com.exozet.sequentialimage.player
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
@@ -105,6 +107,11 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         stopAutoPlay()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        viewHolder.scaleType = ImageView.ScaleType.FIT_CENTER
     }
 
     private fun startAutoPlay() {
