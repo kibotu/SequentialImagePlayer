@@ -13,7 +13,35 @@ class SequentialImagePlayer {
 
     private var uris: Array<Uri>? = null
 
+    private var autoPlay: Boolean = true
+
+    private var playBackwards: Boolean = false
+
+    private var zoom: Boolean = false
+
+    private var controls: Boolean = false
+
     private var fps: Int = 30
+
+    fun zoom(zoom: Boolean): SequentialImagePlayer {
+        this.zoom = zoom
+        return this
+    }
+
+    fun controls(controls: Boolean): SequentialImagePlayer {
+        this.controls = controls
+        return this
+    }
+
+    fun autoPlay(autoPlay: Boolean): SequentialImagePlayer {
+        this.autoPlay = autoPlay
+        return this
+    }
+
+    fun playBackwards(playBackwards: Boolean): SequentialImagePlayer {
+        this.playBackwards = playBackwards
+        return this
+    }
 
     fun fps(@IntRange(from = 1, to = 60) fps: Int): SequentialImagePlayer {
         this.fps = fps
@@ -44,11 +72,19 @@ class SequentialImagePlayer {
             .apply {
                 putExtra(Uri::class.java.canonicalName, uris?.map { it.toString() }?.toTypedArray())
                 putExtra(FPS, fps)
+                putExtra(ZOOM, zoom)
+                putExtra(PLAY_BACKWARDS, playBackwards)
+                putExtra(AUTO_PLAY, autoPlay)
+                putExtra(SHOW_CONTROLS, controls)
             })
 
     companion object {
 
-        const val FPS = "FPS"
+        internal const val FPS = "FPS"
+        internal const val ZOOM = "ZOOM"
+        internal const val PLAY_BACKWARDS = "PLAY_BACKWARDS"
+        internal const val AUTO_PLAY = "AUTO_PLAY"
+        internal const val SHOW_CONTROLS = "SHOW_CONTROLS"
 
         fun with(context: Context): SequentialImagePlayer = SequentialImagePlayer().also { it.context = WeakReference(context) }
     }

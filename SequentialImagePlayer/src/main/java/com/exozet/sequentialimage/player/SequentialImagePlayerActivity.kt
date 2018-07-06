@@ -11,7 +11,6 @@ import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_sequentialimage_player.*
 import java.io.IOException
-import java.io.InputStream
 import kotlin.math.roundToLong
 
 
@@ -45,9 +44,23 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
         initFpsSelector(fps = intent?.extras?.getInt(SequentialImagePlayer.FPS) ?: 30)
 
+        playDirectionSwitch.isChecked = intent?.extras?.getBoolean(SequentialImagePlayer.PLAY_BACKWARDS) ?: false
+        autoplaySwitch.isChecked = intent?.extras?.getBoolean(SequentialImagePlayer.AUTO_PLAY) ?: true
+        viewHolder.isZoomable = intent?.extras?.getBoolean(SequentialImagePlayer.ZOOM) ?: true
+        showControls(intent?.extras?.getBoolean(SequentialImagePlayer.SHOW_CONTROLS) ?: false)
+
         loadImage(uris.first())
 
+        autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
+
         cancelBusy()
+    }
+
+    private fun showControls(isShown: Boolean) {
+        seekBar.goneUnless(!isShown)
+        playDirectionSwitch.goneUnless(!isShown)
+        autoplaySwitch.goneUnless(!isShown)
+        fpsSpinner.goneUnless(!isShown)
     }
 
     private fun initFpsSelector(@IntRange(from = 1, to = 60) fps: Int) {
@@ -112,7 +125,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
         override fun run() {
 
-            index = if (!activity.speed.isChecked) index + 1 else index - 1
+            index = if (!activity.playDirectionSwitch.isChecked) index + 1 else index - 1
 
             index = loopRange(index, max = activity.max)
 
@@ -137,11 +150,11 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
     }
 
     private fun loadBitmap(uri: Uri?): Bitmap? {
-        var istr: InputStream
+
         var bitmap: Bitmap? = null
         try {
 
-            istr = if (uri.toString().startsWith("file:///android_asset/"))
+            val istr = if (uri.toString().startsWith("file:///android_asset/"))
                 assets.open(uri.toString().removePrefix("file:///android_asset/"))
             else
                 contentResolver.openInputStream(uri)
@@ -153,18 +166,25 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
         return bitmap
     }
 
+
     companion object {
 
-        private const val TAG: String = "MainActivity"
+        private val TAG = SequentialImagePlayerActivity::class.java.simpleName
 
         fun Log(message: String) {
-            android.util.Log.v(TAG, message)
+            if (enableLogging) android.util.Log.v(TAG, message)
         }
+
+        var enableLogging = false
 
         fun loopRange(value: Int, min: Int = 0, max: Int): Int = when {
             value > max -> min
             value < min -> max
             else -> value
         }
+    }
+
+    fun View.goneUnless(isGone: Boolean = true) {
+        visibility = if (isGone) View.GONE else View.VISIBLE
     }
 }

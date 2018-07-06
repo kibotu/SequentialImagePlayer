@@ -22,8 +22,15 @@ class MainActivity : AppCompatActivity() {
     private fun startSequentialPlayer(list: List<String>) {
         SequentialImagePlayer
                 .with(this)
+                // .internalStorageFiles(list)
                 .assetFiles(list)
-                .fps(30)
+                // .externalStorageFiles(list)
+                // .files(list)
+                .fps(24) // default: 30
+                .playBackwards(false) // default: false
+                .autoPlay(true) // default: true
+                .zoom(true) // default: true
+                .controls(true) // default: false
                 .startActivity()
     }
 }
