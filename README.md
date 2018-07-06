@@ -4,13 +4,33 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
 
 [![Screenshot](https://git.exozet.com/mobile-de/POC/android-walkthroug-player/blob/master/demo.gif)](https://git.exozet.com/mobile-de/POC/android-walkthroug-player/blob/master/demo.gif)
 
+
 # How to use
 
-TODO
+Start 360 Degree Activity by passing bitmap file path for or an  bitmap
+
+    var list = (1 until 192).map { String.format("stabilized/out%03d.png", it) }.toList()
+
+    SequentialImagePlayer
+            .with(this)
+            // .internalStorageFiles(list)
+            .assetFiles(list)
+            // .externalStorageFiles(list)
+            // .files(list)
+            .fps(24) // default: 30
+            .playBackwards(false) // default: false
+            .autoPlay(true) // default: true
+            .zoom(true) // default: true
+            .controls(true) // default: false
+            .startActivity()
      
 # How to install (tbd)
 
-TODO
+Atm only as module
+    
+    dependencies {
+        api project(':SequentialImagePlayer')
+    }
 
 ## Stabilize video
 
@@ -33,6 +53,24 @@ TODO
 ## Optimize pngs
 
     pngquant app/src/main/assets/default/**.png --ext .png --force
+    
+# Changelog
+
+* Supports showing controls
+* Supports autoplay backwards
+* Supports autoplay
+* Supports custom FPS
+* Supports pinch zoom
+* Supports orientation changes
+* Supports loading indicator
+* Supports loading from asset-folder
+* Supports loading from internal storage
+* Supports loading from external storage
+* Supports loading from file 
+
+# TODO
+
+* Supports swiping  
 
 ## Contributors
 
