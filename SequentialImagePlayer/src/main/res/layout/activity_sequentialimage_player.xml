@@ -7,10 +7,10 @@
     android:background="@color/sequentialimageplayer_background"
     tools:layout_editor_absoluteY="81dp">
 
-    <com.jsibbold.zoomage.ZoomageView
+    <com.exozet.sequentialimage.player.ZoomageView
         android:id="@+id/viewHolder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

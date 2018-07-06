@@ -21,7 +21,14 @@ class SequentialImagePlayer {
 
     private var controls: Boolean = false
 
+    private var swipeSpeed: Float = 1f
+
     private var fps: Int = 30
+
+    fun swipeSpeed(swipeSpeed: Float): SequentialImagePlayer {
+        this.swipeSpeed = swipeSpeed
+        return this
+    }
 
     fun zoom(zoom: Boolean): SequentialImagePlayer {
         this.zoom = zoom
@@ -76,6 +83,7 @@ class SequentialImagePlayer {
                 putExtra(PLAY_BACKWARDS, playBackwards)
                 putExtra(AUTO_PLAY, autoPlay)
                 putExtra(SHOW_CONTROLS, controls)
+                putExtra(SWIPE_SPEED, swipeSpeed / 10f)
             })
 
     companion object {
@@ -85,6 +93,7 @@ class SequentialImagePlayer {
         internal const val PLAY_BACKWARDS = "PLAY_BACKWARDS"
         internal const val AUTO_PLAY = "AUTO_PLAY"
         internal const val SHOW_CONTROLS = "SHOW_CONTROLS"
+        internal const val SWIPE_SPEED = "SWIPE_SPEED"
 
         fun with(context: Context): SequentialImagePlayer = SequentialImagePlayer().also { it.context = WeakReference(context) }
     }

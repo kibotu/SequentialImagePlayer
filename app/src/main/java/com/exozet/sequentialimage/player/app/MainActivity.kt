@@ -28,9 +28,10 @@ class MainActivity : AppCompatActivity() {
                 // .files(list)
                 .fps(24) // default: 30
                 .playBackwards(false) // default: false
-                .autoPlay(true) // default: true
+                .autoPlay(false) // default: true
                 .zoom(true) // default: true
                 .controls(true) // default: false
+                .swipeSpeed(0.8f) // default: 1
                 .startActivity()
     }
 }

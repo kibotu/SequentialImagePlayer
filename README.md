@@ -22,6 +22,7 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
             .autoPlay(true) // default: true
             .zoom(true) // default: true
             .controls(true) // default: false
+            .swipeSpeed(0.8f) // default: 1
             .startActivity()
      
 # How to install (tbd)
@@ -56,6 +57,8 @@ Atm only as module
     
 # Changelog
 
+* Supports swipe speed
+* Supports swiping  
 * Supports showing controls
 * Supports autoplay backwards
 * Supports autoplay
@@ -67,10 +70,6 @@ Atm only as module
 * Supports loading from internal storage
 * Supports loading from external storage
 * Supports loading from file 
-
-# TODO
-
-* Supports swiping  
 
 ## Contributors
 
