@@ -17,7 +17,7 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
             .assetFiles(list)
             // .externalStorageFiles(list)
             // .files(list)
-            .fps(24) // default: 30
+            .fps(24) // default: 30 [1:60]
             .playBackwards(false) // default: false
             .autoPlay(true) // default: true
             .zoom(true) // default: true
@@ -59,7 +59,7 @@ Atm only as module
 * Supports showing controls
 * Supports autoplay backwards
 * Supports autoplay
-* Supports custom FPS
+* Supports custom FPS 
 * Supports pinch zoom
 * Supports orientation changes
 * Supports loading indicator
