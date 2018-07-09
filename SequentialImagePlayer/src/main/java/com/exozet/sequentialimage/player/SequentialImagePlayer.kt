@@ -49,7 +49,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             field = value / 10f
         }
 
-    var autoPlayEnabled: Boolean = false
+    var autoPlay: Boolean = false
         get() = autoplaySwitch.isChecked
         set(value) {
             field = value
@@ -72,7 +72,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var fps: Int = 30
         set(value) {
             field = value
-            log("FPS $fps")
             with(fpsSpinner) {
                 adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
                 setSelection(fps - 1)
@@ -200,11 +199,11 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
             when (motionEvent.actionMasked) {
                 MotionEvent.ACTION_UP -> {
-                    if (autoPlayEnabled) startAutoPlay()
+                    if (autoPlay) startAutoPlay()
                     super.onTouchEvent(motionEvent)
                 }
                 MotionEvent.ACTION_DOWN -> {
-                    if (autoPlayEnabled) stopAutoPlay()
+                    if (autoPlay) stopAutoPlay()
                     if (motionEvent.pointerCount <= 1) {
                         viewHolder.isZoomable = false
                         viewHolder.isTranslatable = false
@@ -234,22 +233,22 @@ class SequentialImagePlayer @JvmOverloads constructor(
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                if (autoPlayEnabled) stopAutoPlay()
+                if (autoPlay) stopAutoPlay()
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                if (autoPlayEnabled) startAutoPlay()
+                if (autoPlay) startAutoPlay()
             }
         })
     }
 
     private fun onResume() {
-        if (autoPlayEnabled) startAutoPlay()
+        if (autoPlay) startAutoPlay()
     }
 
 
     private fun onPause() {
-        if (autoPlayEnabled) stopAutoPlay()
+        if (autoPlay) stopAutoPlay()
     }
 
     private fun onDestroy() {

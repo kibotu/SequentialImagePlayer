@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startSequentialPlayer(list: List<String>) {
-        SequentialImagePlayer
+        SequentialImagePlayerActivity.Builder
                 .with(this)
                 .fps(24) // default: 30
                 .playBackwards(false) // default: false

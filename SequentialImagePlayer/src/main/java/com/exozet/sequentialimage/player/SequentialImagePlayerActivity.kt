@@ -33,28 +33,17 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 return
             }
 
-            sequentialImagePlayer.imageUris = files.map { Uri.parse(it) }.toTypedArray()
+            with(sequentialImagePlayer) {
 
-            var fps = arguments.getInt(FPS)
-                    ?: 30
-
-            var playBackwards = arguments.getBoolean(PLAY_BACKWARDS)
-                    ?: false
-
-            var autoPlay = arguments.getBoolean(AUTO_PLAY)
-                    ?: true
-
-            var zoomable = arguments.getBoolean(ZOOMABLE)
-                    ?: true
-
-            var translatable = arguments.getBoolean(TRANSLATABLE)
-                    ?: true
-
-            var showControls = arguments.getBoolean(SHOW_CONTROLS)
-                    ?: false
-
-            var swipeSpeed = arguments.getFloat(SWIPE_SPEED)
-                    ?: 1f
+                imageUris = files.map { Uri.parse(it) }.toTypedArray()
+                fps = arguments.getInt(FPS) ?: 30
+                playBackwards = arguments.getBoolean(PLAY_BACKWARDS) ?: false
+                autoPlay = arguments.getBoolean(AUTO_PLAY) ?: true
+                zoomable = arguments.getBoolean(ZOOMABLE) ?: true
+                translatable = arguments.getBoolean(TRANSLATABLE) ?: true
+                showControls = arguments.getBoolean(SHOW_CONTROLS) ?: false
+                swipeSpeed = arguments.getFloat(SWIPE_SPEED) ?: 1f
+            }
         }
     }
 
