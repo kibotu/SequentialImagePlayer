@@ -2,25 +2,18 @@ package com.exozet.sequentialimage.player
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.SeekBar
 import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.AUTO_PLAY
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.FPS
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.PLAY_BACKWARDS
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SHOW_CONTROLS
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SWIPE_SPEED
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.ZOOM
 import kotlinx.android.synthetic.main.activity_sequentialimage_player.*
-import java.io.IOException
 import java.lang.ref.WeakReference
-import kotlin.math.roundToInt
-import kotlin.math.roundToLong
 
 
 class SequentialImagePlayerActivity : AppCompatActivity() {
@@ -31,17 +24,41 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sequentialimage_player)
 
-        busy()
+        intent?.extras?.let { arguments ->
 
-        val files = intent?.extras?.getStringArray(Uri::class.java.canonicalName)
-        if (files == null || files.isEmpty()) {
-            finish()
-            return
+            val files = arguments.getStringArray(Uri::class.java.canonicalName)
+            if (files == null || files.isEmpty()) {
+                finish()
+                return
+            }
+
+            sequentialImagePlayer.imageUris = files.map { Uri.parse(it) }.toTypedArray()
+
+//        playDirectionSwitch.isChecked = intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.PLAY_BACKWARDS) ?: false
+//        autoplaySwitch.isChecked = intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.AUTO_PLAY) ?: true
+//        viewHolder.isZoomable = intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.ZOOM) ?: true
+//        showControls(intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.SHOW_CONTROLS)
+//                ?: false)
+//        swipeSpeed = intent?.extras?.getFloat(SequentialImagePlayerActivity.Builder.SWIPE_SPEED) ?: 1f
+
+
+            var fps = arguments.getInt(FPS)
+                    ?: 30
+
+            var playBackwards = arguments.getBoolean(PLAY_BACKWARDS)
+                    ?: false
+            var autoPlay = arguments.getBoolean(AUTO_PLAY)
+                    ?: true
+            var zoomable = arguments.getBoolean(ZOOM)
+                    ?: true
+
+            var showControls = arguments.getBoolean(SHOW_CONTROLS)
+                    ?: false
+
+            var swipeSpeed = arguments.getFloat(SWIPE_SPEED)
+                    ?: 1f
         }
-
-        // sequentialImagePlayer
     }
-
 
     class Builder {
 
@@ -103,14 +120,6 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 })
 
         companion object {
-
-            internal const val FPS = "FPS"
-            internal const val ZOOM = "ZOOM"
-            internal const val PLAY_BACKWARDS = "PLAY_BACKWARDS"
-            internal const val AUTO_PLAY = "AUTO_PLAY"
-            internal const val SHOW_CONTROLS = "SHOW_CONTROLS"
-            internal const val SWIPE_SPEED = "SWIPE_SPEED"
-
             fun with(context: Context): Builder = Builder().also { it.context = WeakReference(context) }
         }
     }
