@@ -1,4 +1,4 @@
-package com.exozet
+package com.exozet.sequentialimage.player
 
 import android.content.Context
 import android.net.Uri
