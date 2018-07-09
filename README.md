@@ -4,26 +4,45 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
 
 [![Screenshot](https://git.exozet.com/mobile-de/POC/android-walkthroug-player/blob/master/demo.gif)](https://git.exozet.com/mobile-de/POC/android-walkthroug-player/blob/master/demo.gif)
 
-
 # How to use
+
+## As view
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    
+        <com.exozet.sequentialimage.player.SequentialImagePlayer
+            android:id="@+id/sequentialImagePlayer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        
+
+## As Standalone Activity    
 
 Start 360 Degree Activity by passing bitmap file path for or an  bitmap
 
-    var list = (1 until 192).map { String.format("stabilized/out%03d.png", it) }.toList()
+    (1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
 
-    SequentialImagePlayer
-            .with(this)
-            // .internalStorageFiles(list)
-            .assetFiles(list)
-            // .externalStorageFiles(list)
-            // .files(list)
-            .fps(24) // default: 30 [1:60]
-            .playBackwards(false) // default: false
-            .autoPlay(true) // default: true
-            .zoom(true) // default: true
-            .controls(true) // default: false
-            .swipeSpeed(0.8f) // default: 1
-            .startActivity()
+    SequentialImagePlayerActivity.Builder
+                  .with(this)
+                  .uris(list)
+                  .fps(24) // default: 30
+                  .playBackwards(false) // default: false
+                  .autoPlay(false) // default: true
+                  .zoomable(true) // default: true
+                  .translatable(true) // default: true
+                  .showControls(true) // default: false
+                  .swipeSpeed(0.8f) // default: 1
+                  .startActivity()
      
 # How to install (tbd)
 
@@ -57,6 +76,8 @@ Atm only as module
     
 # Changelog
 
+* Supports being added as custom view
+* Supports translatable
 * Supports swipe speed
 * Supports swiping  
 * Supports showing controls

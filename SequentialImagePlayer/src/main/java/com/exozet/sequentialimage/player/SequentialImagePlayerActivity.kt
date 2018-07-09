@@ -27,7 +27,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
         intent?.extras?.let { arguments ->
 
-            val files = arguments.getStringArray(Uri::class.java.canonicalName)
+            val files = arguments.getParcelableArray(Uri::class.java.canonicalName)
             if (files == null || files.isEmpty()) {
                 finish()
                 return
@@ -35,7 +35,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
             with(sequentialImagePlayer) {
 
-                imageUris = files.map { Uri.parse(it) }.toTypedArray()
+                imageUris = files.map { it as Uri }.toTypedArray()
                 fps = arguments.getInt(FPS) ?: 30
                 playBackwards = arguments.getBoolean(PLAY_BACKWARDS) ?: false
                 autoPlay = arguments.getBoolean(AUTO_PLAY) ?: true
@@ -102,9 +102,14 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             return this
         }
 
+        fun uris(uris: Array<Uri>): Builder {
+            this.uris = uris
+            return this
+        }
+
         fun startActivity() = context.get()!!.startActivity(Intent(context.get(), SequentialImagePlayerActivity::class.java)
                 .apply {
-                    putExtra(Uri::class.java.canonicalName, uris?.map { it.toString() }?.toTypedArray())
+                    putExtra(Uri::class.java.canonicalName, uris)
                     putExtra(FPS, fps)
                     putExtra(TRANSLATABLE, translatable)
                     putExtra(PLAY_BACKWARDS, playBackwards)
