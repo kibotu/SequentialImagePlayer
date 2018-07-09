@@ -11,7 +11,8 @@ import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.FPS
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.PLAY_BACKWARDS
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SHOW_CONTROLS
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SWIPE_SPEED
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.ZOOM
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.TRANSLATABLE
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.ZOOMABLE
 import kotlinx.android.synthetic.main.activity_sequentialimage_player.*
 import java.lang.ref.WeakReference
 
@@ -34,22 +35,19 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
             sequentialImagePlayer.imageUris = files.map { Uri.parse(it) }.toTypedArray()
 
-//        playDirectionSwitch.isChecked = intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.PLAY_BACKWARDS) ?: false
-//        autoplaySwitch.isChecked = intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.AUTO_PLAY) ?: true
-//        viewHolder.isZoomable = intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.ZOOM) ?: true
-//        showControls(intent?.extras?.getBoolean(SequentialImagePlayerActivity.Builder.SHOW_CONTROLS)
-//                ?: false)
-//        swipeSpeed = intent?.extras?.getFloat(SequentialImagePlayerActivity.Builder.SWIPE_SPEED) ?: 1f
-
-
             var fps = arguments.getInt(FPS)
                     ?: 30
 
             var playBackwards = arguments.getBoolean(PLAY_BACKWARDS)
                     ?: false
+
             var autoPlay = arguments.getBoolean(AUTO_PLAY)
                     ?: true
-            var zoomable = arguments.getBoolean(ZOOM)
+
+            var zoomable = arguments.getBoolean(ZOOMABLE)
+                    ?: true
+
+            var translatable = arguments.getBoolean(TRANSLATABLE)
                     ?: true
 
             var showControls = arguments.getBoolean(SHOW_CONTROLS)
@@ -70,9 +68,11 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
         private var playBackwards: Boolean = false
 
-        private var zoom: Boolean = false
+        private var zoomable: Boolean = true
 
-        private var controls: Boolean = false
+        private var translatable: Boolean = true
+
+        private var showControls: Boolean = false
 
         private var swipeSpeed: Float = 1f
 
@@ -83,13 +83,18 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             return this
         }
 
-        fun zoom(zoom: Boolean): Builder {
-            this.zoom = zoom
+        fun translatable(translatable: Boolean): Builder {
+            this.translatable = translatable
             return this
         }
 
-        fun controls(controls: Boolean): Builder {
-            this.controls = controls
+        fun zoomable(zoomable: Boolean): Builder {
+            this.zoomable = zoomable
+            return this
+        }
+
+        fun showControls(showControls: Boolean): Builder {
+            this.showControls = showControls
             return this
         }
 
@@ -112,11 +117,11 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 .apply {
                     putExtra(Uri::class.java.canonicalName, uris?.map { it.toString() }?.toTypedArray())
                     putExtra(FPS, fps)
-                    putExtra(ZOOM, zoom)
+                    putExtra(TRANSLATABLE, translatable)
                     putExtra(PLAY_BACKWARDS, playBackwards)
                     putExtra(AUTO_PLAY, autoPlay)
-                    putExtra(SHOW_CONTROLS, controls)
-                    putExtra(SWIPE_SPEED, swipeSpeed / 10f)
+                    putExtra(SHOW_CONTROLS, showControls)
+                    putExtra(SWIPE_SPEED, swipeSpeed)
                 })
 
         companion object {

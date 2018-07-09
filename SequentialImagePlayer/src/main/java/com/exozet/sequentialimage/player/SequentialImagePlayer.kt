@@ -44,17 +44,65 @@ class SequentialImagePlayer @JvmOverloads constructor(
             field = value
         }
 
-    private var swipeSpeed: Float = 1f / 10f
+    var swipeSpeed: Float = 1f
+        set(value) {
+            field = value / 10f
+        }
 
     var autoPlayEnabled: Boolean = false
         get() = autoplaySwitch.isChecked
+        set(value) {
+            field = value
+            autoplaySwitch.isChecked = value
+        }
 
     internal var max: Int = 0
         get() = imageUris.size - 1
 
+    var showControls: Boolean = false
+        set(value) {
+            field = value
+            seekBar.goneUnless(!isShown)
+            playDirectionSwitch.goneUnless(!isShown)
+            autoplaySwitch.goneUnless(!isShown)
+            fpsSpinner.goneUnless(!isShown)
+        }
+
+    @IntRange(from = 1, to = 60)
+    var fps: Int = 30
+        set(value) {
+            field = value
+            log("FPS $fps")
+            with(fpsSpinner) {
+                adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
+                setSelection(fps - 1)
+            }
+        }
+
+    var zoomable: Boolean = true
+        set(value) {
+            field = value
+            viewHolder.isZoomable = value
+        }
+
+    var translatable: Boolean = true
+        set(value) {
+            field = value
+            viewHolder.isTranslatable = value
+        }
+
+    var playBackwards: Boolean = true
+        set(value) {
+            field = value
+            playDirectionSwitch.isChecked = value
+        }
+
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.sequentialimageplayer_view, this, true)
+        fps = 30
+        showControls = false
+        playBackwards = false
     }
 
     private fun onCreate() {
@@ -62,17 +110,14 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         initSeekBar()
 
-        initFpsSelector(29)
+        autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
 
-        showControls(true)
+        addSwipeGesture()
 
         loadImage(imageUris.firstOrNull())
 
-        autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
-
         cancelBusy()
 
-        addSwipeGesture()
     }
 
     override fun onAttachedToWindow() {
@@ -153,8 +198,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         viewHolder.setOnTouchListener { _, motionEvent ->
 
-            viewHolder.isZoomable = true
-            viewHolder.isTranslatable = true
+            viewHolder.isZoomable = zoomable
+            viewHolder.isTranslatable = zoomable
 
             when (motionEvent.actionMasked) {
                 MotionEvent.ACTION_UP -> {
@@ -182,21 +227,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
                     super.onTouchEvent(motionEvent)
                 }
             }
-        }
-    }
-
-    fun showControls(isShown: Boolean) {
-        seekBar.goneUnless(!isShown)
-        playDirectionSwitch.goneUnless(!isShown)
-        autoplaySwitch.goneUnless(!isShown)
-        fpsSpinner.goneUnless(!isShown)
-    }
-
-    private fun initFpsSelector(@IntRange(from = 1, to = 60) fps: Int) {
-        log("FPS $fps")
-        with(fpsSpinner) {
-            adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
-            setSelection(fps - 1)
         }
     }
 
@@ -277,7 +307,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
     companion object {
 
         internal const val FPS = "FPS"
-        internal const val ZOOM = "ZOOM"
+        internal const val ZOOMABLE = "ZOOMABLE"
+        internal const val TRANSLATABLE = "TRANSLATABLE"
         internal const val PLAY_BACKWARDS = "PLAY_BACKWARDS"
         internal const val AUTO_PLAY = "AUTO_PLAY"
         internal const val SHOW_CONTROLS = "SHOW_CONTROLS"
