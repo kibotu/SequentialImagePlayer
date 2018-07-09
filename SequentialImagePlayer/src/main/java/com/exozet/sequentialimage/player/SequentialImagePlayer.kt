@@ -62,10 +62,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var showControls: Boolean = false
         set(value) {
             field = value
-            seekBar.goneUnless(!isShown)
-            playDirectionSwitch.goneUnless(!isShown)
-            autoplaySwitch.goneUnless(!isShown)
-            fpsSpinner.goneUnless(!isShown)
+            seekBar.goneUnless(!value)
+            playDirectionSwitch.goneUnless(!value)
+            autoplaySwitch.goneUnless(!value)
+            fpsSpinner.goneUnless(!value)
         }
 
     @IntRange(from = 1, to = 60)
@@ -100,9 +100,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.sequentialimageplayer_view, this, true)
-        fps = 30
-        showControls = false
-        playBackwards = false
     }
 
     private fun onCreate() {
