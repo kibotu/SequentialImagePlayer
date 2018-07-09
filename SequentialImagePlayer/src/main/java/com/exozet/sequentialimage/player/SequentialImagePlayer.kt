@@ -2,8 +2,12 @@ package com.exozet.sequentialimage.player
 
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -14,11 +18,13 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.annotation.IntRange
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import kotlinx.android.synthetic.main.sequentialimageplayer_view.view.*
 import java.io.IOException
 import java.util.*
 import kotlin.math.roundToInt
+
 
 class SequentialImagePlayer @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -95,6 +101,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
             field = value
             playDirectionSwitch.isChecked = value
         }
+
+    var blurLetterbox: Boolean = true
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -272,7 +280,17 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (uri == null)
             return
 
-        viewHolder.setImageBitmap(loadBitmap(uri))
+        val bitmap = loadBitmap(uri)
+        viewHolder.setImageBitmap(bitmap)
+
+        if (resources.configuration.orientation == ORIENTATION_PORTRAIT)
+            if (bitmap?.width ?: 0 >= bitmap?.height ?: 0)
+                viewHolderBackground.blur(bitmap)
+
+
+        if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
+            if (bitmap?.height ?: 0 >= bitmap?.width ?: 0)
+                viewHolderBackground.blur(bitmap)
     }
 
     private fun loadBitmap(uri: Uri?): Bitmap? {
@@ -309,6 +327,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         internal const val AUTO_PLAY = "AUTO_PLAY"
         internal const val SHOW_CONTROLS = "SHOW_CONTROLS"
         internal const val SWIPE_SPEED = "SWIPE_SPEED"
+        internal const val BLUR_LETTERBOX = "BLUR_LETTERBOX"
 
         internal fun loopRange(value: Int, min: Int = 0, max: Int): Int = when {
             value > max -> min
@@ -319,5 +338,33 @@ class SequentialImagePlayer @JvmOverloads constructor(
         internal fun View.goneUnless(isGone: Boolean = true) {
             visibility = if (isGone) View.GONE else View.VISIBLE
         }
+    }
+
+    private val paint = Paint().apply { flags = Paint.FILTER_BITMAP_FLAG }
+
+    private var blurryBitmap: Bitmap? = null
+
+    private fun AppCompatImageView.blur(bitmap: Bitmap?, radius: Int = 20, scaleFactor: Float = 10f) {
+        if (!blurLetterbox)
+            return
+
+        if (bitmap == null || measuredWidth <= 0 || measuredHeight <= 0)
+            return
+
+        val startMs = System.currentTimeMillis()
+
+        if (blurryBitmap == null)
+            blurryBitmap = Bitmap.createBitmap((measuredWidth / scaleFactor).toInt(), (measuredHeight / scaleFactor).toInt(), Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(blurryBitmap)
+        canvas.translate(-left.toFloat() + -measuredWidth / 2f, -top.toFloat() / 2f)
+//        canvas.scale(1 / scaleFactor, 1 / scaleFactor)
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        blurryBitmap = FastBlur.doBlur(blurryBitmap, radius, true)
+
+        setImageBitmap(blurryBitmap)
+
+        // log("view=[$measuredWidth:$measuredHeight]: bitmap=[${bitmap.width}:${bitmap.height}] overlay=[${blurryBitmap?.width}:${blurryBitmap?.height}] in ${System.currentTimeMillis() - startMs} ms")
     }
 }

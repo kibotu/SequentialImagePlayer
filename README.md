@@ -25,6 +25,17 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
         
+    private fun startSequentialPlayer(list: List<Uri>) = with(sequentialImagePlayer) {
+        imageUris = list.toTypedArray()
+        autoPlay = true
+        fps = 30
+        playBackwards = false
+        zoomable = true
+        translatable = true
+        showControls = false
+        swipeSpeed = 0.7f
+        blurLetterbox = true
+    }
 
 ## As Standalone Activity    
 
@@ -42,6 +53,7 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
                   .translatable(true) // default: true
                   .showControls(true) // default: false
                   .swipeSpeed(0.8f) // default: 1
+                  .blurLetterbox() // default: true
                   .startActivity()
      
 # How to install (tbd)
@@ -76,6 +88,7 @@ Atm only as module
     
 # Changelog
 
+* Supports blurry letterbox effect
 * Supports being added as custom view
 * Supports translatable
 * Supports swipe speed

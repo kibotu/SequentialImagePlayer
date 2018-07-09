@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.AUTO_PLAY
+import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.BLUR_LETTERBOX
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.FPS
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.PLAY_BACKWARDS
 import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SHOW_CONTROLS
@@ -43,6 +44,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 translatable = arguments.getBoolean(TRANSLATABLE) ?: true
                 showControls = arguments.getBoolean(SHOW_CONTROLS) ?: false
                 swipeSpeed = arguments.getFloat(SWIPE_SPEED) ?: 1f
+                blurLetterbox = arguments.getBoolean(BLUR_LETTERBOX) ?: true
             }
         }
     }
@@ -66,6 +68,13 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
         private var swipeSpeed: Float = 1f
 
         private var fps: Int = 30
+
+        private var blurLetterbox: Boolean = true
+
+        fun blurLetterbox(blurLetterbox: Boolean = true): Builder {
+            this.blurLetterbox = blurLetterbox
+            return this
+        }
 
         fun swipeSpeed(swipeSpeed: Float): Builder {
             this.swipeSpeed = swipeSpeed
@@ -116,6 +125,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                     putExtra(AUTO_PLAY, autoPlay)
                     putExtra(SHOW_CONTROLS, showControls)
                     putExtra(SWIPE_SPEED, swipeSpeed)
+                    putExtra(SWIPE_SPEED, blurLetterbox)
                 })
 
         companion object {
