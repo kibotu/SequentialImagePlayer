@@ -81,27 +81,27 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             return this
         }
 
-        fun translatable(translatable: Boolean): Builder {
+        fun translatable(translatable: Boolean = true): Builder {
             this.translatable = translatable
             return this
         }
 
-        fun zoomable(zoomable: Boolean): Builder {
+        fun zoomable(zoomable: Boolean = true): Builder {
             this.zoomable = zoomable
             return this
         }
 
-        fun showControls(showControls: Boolean): Builder {
+        fun showControls(showControls: Boolean = true): Builder {
             this.showControls = showControls
             return this
         }
 
-        fun autoPlay(autoPlay: Boolean): Builder {
+        fun autoPlay(autoPlay: Boolean = true): Builder {
             this.autoPlay = autoPlay
             return this
         }
 
-        fun playBackwards(playBackwards: Boolean): Builder {
+        fun playBackwards(playBackwards: Boolean = true): Builder {
             this.playBackwards = playBackwards
             return this
         }
@@ -125,7 +125,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                     putExtra(AUTO_PLAY, autoPlay)
                     putExtra(SHOW_CONTROLS, showControls)
                     putExtra(SWIPE_SPEED, swipeSpeed)
-                    putExtra(SWIPE_SPEED, blurLetterbox)
+                    putExtra(BLUR_LETTERBOX, blurLetterbox)
                 })
 
         companion object {

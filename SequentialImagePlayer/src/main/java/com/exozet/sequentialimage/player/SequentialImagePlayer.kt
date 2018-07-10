@@ -81,7 +81,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             field = value
             with(fpsSpinner) {
                 adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
-                setSelection(fps - 1)
+                setSelection(value - 1)
             }
         }
 
@@ -379,6 +379,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         setImageBitmap(blurryBitmap)
 
-        // log("view=[$measuredWidth:$measuredHeight]: bitmap=[${bitmap.width}:${bitmap.height}] overlay=[${blurryBitmap?.width}:${blurryBitmap?.height}] in ${System.currentTimeMillis() - startMs} ms")
+        log("view=[$measuredWidth:$measuredHeight]: bitmap=[${bitmap.width}:${bitmap.height}] overlay=[${blurryBitmap?.width}:${blurryBitmap?.height}] in ${System.currentTimeMillis() - startMs} ms")
     }
 }

@@ -27,10 +27,10 @@ class MainActivity : AppCompatActivity() {
                 .uris(list)
                 .fps(30) // default: 30
                 .playBackwards(false) // default: false
-                .autoPlay(true) // default: true
-                .zoomable(true) // default: true
-                .translatable(true) // default: true
-                .showControls(true) // default: false
+                .autoPlay() // default: true
+                .zoomable() // default: true
+                .translatable() // default: true
+                .showControls() // default: false
                 .swipeSpeed(0.8f) // default: 1
                 .blurLetterbox() // default: true
                 .startActivity()
