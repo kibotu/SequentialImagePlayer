@@ -30,7 +30,7 @@ class ImageSwapper(var player: SequentialImagePlayer) : Runnable {
 
         player.cancelBusy()
 
-        val fps = (1000f / player.fpsSpinner.selectedItem.toString().toInt()).roundToLong()
+        val fps = (1000f / player.fps).roundToLong()
         // Log("playing ${activity.uris[index % activity.max]} aiming for fps=$fps")
 
         player.viewHolder.postDelayed(this, fps)

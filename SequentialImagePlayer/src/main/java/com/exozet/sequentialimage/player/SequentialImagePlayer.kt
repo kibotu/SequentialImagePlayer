@@ -14,6 +14,7 @@ import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SeekBar
@@ -116,12 +117,25 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
 
+        initFpsSpinner()
+
         addSwipeGesture()
 
         loadImage(imageUris.firstOrNull())
 
         cancelBusy()
 
+    }
+
+    private fun initFpsSpinner() {
+        fpsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                fps = p2
+            }
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -344,7 +358,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private var blurryBitmap: Bitmap? = null
 
-    private fun AppCompatImageView.blur(bitmap: Bitmap?, radius: Int = 20, scaleFactor: Float = 10f) {
+    private fun AppCompatImageView.blur(bitmap: Bitmap?, radius: Int = 10, scaleFactor: Float = 8f) {
         if (!blurLetterbox)
             return
 
@@ -354,7 +368,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         val startMs = System.currentTimeMillis()
 
         if (blurryBitmap == null)
-            blurryBitmap = Bitmap.createBitmap((measuredWidth / scaleFactor).toInt(), (measuredHeight / scaleFactor).toInt(), Bitmap.Config.ARGB_8888)
+            blurryBitmap = Bitmap.createBitmap((measuredWidth / scaleFactor).toInt(), (measuredHeight / scaleFactor).toInt(), Bitmap.Config.RGB_565)
 
         val canvas = Canvas(blurryBitmap)
         canvas.translate(-left.toFloat() + -measuredWidth / 2f, -top.toFloat() / 2f)
