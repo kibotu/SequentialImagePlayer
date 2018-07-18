@@ -1,7 +1,9 @@
 package com.exozet.sequentialimage.player.app
 
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.exozet.sequentialimage.player.SequentialImagePlayerActivity
 import com.exozet.sequentialimage.player.parseAssetFile
@@ -18,6 +20,13 @@ class MainActivity : AppCompatActivity() {
         }
         stabilized_video.setOnClickListener {
             startSequentialPlayer((1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray())
+        }
+
+        val bitmap = ((image.drawable) as BitmapDrawable).bitmap
+
+        fish_eye.setOnClickListener {
+            defished.setImageBitmap(RemoveFishEye(bitmap, 3.5))
+            defished.visibility = View.VISIBLE
         }
     }
 
