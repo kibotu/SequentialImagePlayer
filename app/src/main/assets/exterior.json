@@ -1,0 +1,47 @@
+{
+  "id": "4da69d03-4e84-4674-bf33-9407843baae8",
+  "createdAt": "2018-07-19T13:38:54+02:00",
+  "adId": "999999999",
+  "vendorId": "randomUser",
+  "state": "stabilizing",
+  "meta": {
+    "camera_start_rotation_x": "0",
+    "camera_start_rotation_y": "0",
+    "camera_start_rotation_z": "0"
+  },
+  "imageSequence": {
+    "id": "4da69d03-4e84-4674-bf33-9407843baae8",
+    "imageItems": [
+      {
+        "id": "4da69d03-4e84-4674-bf33-9407843baae8",
+        "position": "0",
+        "media": {
+          "id": "4da69d03-4e84-4674-bf33-9407843baae8",
+          "contenType": "image/png",
+          "publicUrls": {
+            "default_small": "/uploads/media/default/0001/01/thumb_2_default_small.jpeg",
+            "default_admin_list": "/uploads/media/default/0001/01/thumb_2_default_admin_list.jpeg",
+            "default_admin_thumbnail": "/uploads/media/default/0001/01/thumb_2_default_admin_thumbnail.jpeg",
+            "default_admin_hd": "/uploads/media/default/0001/01/thumb_2_default_admin_hd.jpeg",
+            "reference": "/uploads/media/default/0001/01/fcb2e4bd1174aed176c722e4dfae21296dd669e4.jpeg"
+          }
+        }
+      },
+      {
+        "id": "4da69d03-4e84-4674-bf33-9407843baae8",
+        "position": "1",
+        "media": {
+          "id": "4da69d03-4e84-4674-bf33-9407843baae8",
+          "contenType": "image/png",
+          "publicUrls": {
+            "default_small": "/uploads/media/default/0001/01/thumb_2_default_small.jpeg",
+            "default_admin_list": "/uploads/media/default/0001/01/thumb_2_default_admin_list.jpeg",
+            "default_admin_thumbnail": "/uploads/media/default/0001/01/thumb_2_default_admin_thumbnail.jpeg",
+            "default_admin_hd": "/uploads/media/default/0001/01/thumb_2_default_admin_hd.jpeg",
+            "reference": "/uploads/media/default/0001/01/fcb2e4bd1174aed176c722e4dfae21296dd669e4.jpeg"
+          }
+        }
+      }
+    ]
+  }
+}

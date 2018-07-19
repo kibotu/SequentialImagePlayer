@@ -1,4 +1,4 @@
-package com.exozet.sequentialimage.player.app
+package com.exozet.sequentialimage.player
 
 import android.graphics.Bitmap
 import android.util.Log

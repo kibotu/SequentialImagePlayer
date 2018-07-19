@@ -3,8 +3,11 @@ package com.exozet.sequentialimage.player.app
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import com.exozet.sequentialimage.player.RemoveFishEye
 import com.exozet.sequentialimage.player.SequentialImagePlayerActivity
 import com.exozet.sequentialimage.player.parseAssetFile
 import kotlinx.android.synthetic.main.activity_main.*
@@ -28,6 +31,31 @@ class MainActivity : AppCompatActivity() {
             defished.setImageBitmap(RemoveFishEye(bitmap, 3.5))
             defished.visibility = View.VISIBLE
         }
+
+        fish_eye_gl.setOnClickListener {
+
+            glview.addBackgroundImages(listOf(bitmap))
+
+            glview.visibility = View.VISIBLE
+        }
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                val s = p1 / 10f
+                Log.v(MainActivity::class.java.simpleName, "strength: $s")
+                glview.setStrength(s)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+            }
+        })
+
+        glview.setStrength(3.5f)
+        glview.addBackgroundImages(listOf(bitmap))
+        glview.visibility = View.VISIBLE
     }
 
     private fun startSequentialPlayer(list: Array<Uri>) {
