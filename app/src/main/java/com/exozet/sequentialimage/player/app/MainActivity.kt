@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val s = p1 / 10f
                 Log.v(MainActivity::class.java.simpleName, "strength: $s")
-                glview.setStrength(s)
+                glview.setStrength((s - 5f))
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {

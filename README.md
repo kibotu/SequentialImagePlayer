@@ -2,7 +2,9 @@
 
 Native Sequential Image Player. Supports different fps, auto play and scrubbing for-/ and backwards.  
 
-[![Screenshot](https://git.exozet.com/mobile-de/POC/android-walkthroug-player/blob/master/demo.gif)](https://git.exozet.com/mobile-de/POC/android-walkthroug-player/blob/master/demo.gif)
+[![Screenshot](demo.gif)](demo.gif)
+
+[![Screenshot](screenshot.png)](screenshot.png)
 
 # How to use
 
