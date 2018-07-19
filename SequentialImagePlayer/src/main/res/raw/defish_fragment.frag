@@ -16,14 +16,8 @@ uniform float zoom;
 
 void main(void) {
 
-    // strength
-    float s = strength;
-
-    // zoom
-    float z = zoom;
-
     // correction radius
-    float cr = sqrt(textureSize.x * textureSize.x + textureSize.y * textureSize.y) / s;
+    float cr = sqrt(textureSize.x * textureSize.x + textureSize.y * textureSize.y) / strength;
 
     // half width
     float hW = textureSize.x / 2.0;
@@ -53,17 +47,12 @@ void main(void) {
         : atan(r) / r;
 
     // get source coordinate by distance correction and apply zooming
-    float sX = hW + theta * translatedUv.x * z;
-    float sY = hH + theta * translatedUv.y * z;
+    float sX = hW + theta * translatedUv.x * zoom;
+    float sY = hH + theta * translatedUv.y * zoom;
 
-    // check bounds
-//    vec2 uv = vec2(clamp(sX, 0.0, resolution.x), clamp(sY, 0.0, resolution.y));
-
-//    // use new uv coordinates
+    // use new uv coordinates
     vec2 newUv = vec2(sX /textureSize.x , sY / textureSize.y);
     vec4 color = texture2D(texture, newUv);
-//    vec4 color = texture2D(texture, texcoordVarying);
 
     gl_FragColor = vec4(color.r, color.g, color.b, alpha);
-//    gl_FragColor = vec4(newUv.x, 1, 0, alpha);
 }

@@ -53,10 +53,6 @@ class MainActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(p0: SeekBar?) {
             }
         })
-
-        glview.setStrength(3.5f)
-        glview.addBackgroundImages(listOf(bitmap))
-        glview.visibility = View.VISIBLE
     }
 
     private fun startSequentialPlayer(list: Array<Uri>) {
