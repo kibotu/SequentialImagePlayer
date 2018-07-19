@@ -113,9 +113,11 @@ internal class RippleRenderer(private val context: Context,
 //            Log.v(this::class.java.simpleName, "width=$width height=$height")
 
             // resolution
-            GLES20.glGetUniformLocation(renderInfo.programId, "resolution").run {
-                GLES20.glUniform2f(this, width, height)
+            GLES20.glGetUniformLocation(renderInfo.programId, "textureSize").run {
+                GLES20.glUniform2f(this, bgImages.first().width.toFloat(), bgImages.first().height.toFloat())
             }
+
+            //Log.v(this::class.java.simpleName,  "w=$width h=$height width=${bgImages.first().width.toFloat()} height=${bgImages.first().height.toFloat()} strength=$strength")
 
             // time
             GLES20.glGetUniformLocation(renderInfo.programId, "time").run {

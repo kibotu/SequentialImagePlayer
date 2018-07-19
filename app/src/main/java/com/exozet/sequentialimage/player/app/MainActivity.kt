@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         fish_eye_gl.setOnClickListener {
 
             glview.addBackgroundImages(listOf(bitmap))
+            glview.setStrength(3.5f)
 
             glview.visibility = View.VISIBLE
         }

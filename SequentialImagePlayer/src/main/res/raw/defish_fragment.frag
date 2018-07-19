@@ -6,7 +6,7 @@ varying vec2 texcoordVarying;  // position received from vertex shader
 uniform sampler2D texture;
 
 uniform float time;
-uniform vec2 resolution;
+uniform vec2 textureSize;
 uniform float rippleOffset;
 uniform float rippleCenterUvX;
 uniform float rippleCenterUvY;
@@ -23,22 +23,25 @@ void main(void) {
     float z = zoom;
 
     // correction radius
-    float cr = sqrt(resolution.x * resolution.x + resolution.y * resolution.y) / s;
+    float cr = sqrt(textureSize.x * textureSize.x + textureSize.y * textureSize.y) / s;
 
     // half width
-    float hW = resolution.x / 2.0;
+    float hW = textureSize.x / 2.0;
 
     // half height
-    float hH = resolution.y / 2.0;
+    float hH = textureSize.y / 2.0;
 
     // translate uv by half resolution
-    vec2 new = vec2(texcoordVarying.x - hW, texcoordVarying.y -  hH);
+    vec2 translatedUv = vec2(
+        texcoordVarying.x * textureSize.x - hW,
+        texcoordVarying.y * textureSize.y -  hH
+    );
 
     // distance
-    float dis = sqrt((new.x) *
-                     (new.x)
-		            +(new.y) *
-                     (new.y));
+    float dis = sqrt((translatedUv.x) *
+                     (translatedUv.x)
+		            +(translatedUv.y) *
+                     (translatedUv.y));
 
     // distance ratio to radius
     float r = dis / cr;
@@ -50,14 +53,17 @@ void main(void) {
         : atan(r) / r;
 
     // get source coordinate by distance correction and apply zooming
-    float sX = hW + theta * new.x * z;
-    float sY = hH + theta * new.y * z;
+    float sX = hW + theta * translatedUv.x * z;
+    float sY = hH + theta * translatedUv.y * z;
 
     // check bounds
-    vec2 uv = vec2(clamp(sX, 0.0, resolution.x), clamp(sY, 0.0, resolution.y));
+//    vec2 uv = vec2(clamp(sX, 0.0, resolution.x), clamp(sY, 0.0, resolution.y));
 
-    // use new uv coordinates
-    vec4 color = texture2D(texture, uv);
+//    // use new uv coordinates
+    vec2 newUv = vec2(sX /textureSize.x , sY / textureSize.y);
+    vec4 color = texture2D(texture, newUv);
+//    vec4 color = texture2D(texture, texcoordVarying);
 
     gl_FragColor = vec4(color.r, color.g, color.b, alpha);
+//    gl_FragColor = vec4(newUv.x, 1, 0, alpha);
 }
