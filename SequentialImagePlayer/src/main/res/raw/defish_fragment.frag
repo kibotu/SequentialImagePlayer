@@ -7,9 +7,6 @@ uniform sampler2D texture;
 
 uniform float time;
 uniform vec2 textureSize;
-uniform float rippleOffset;
-uniform float rippleCenterUvX;
-uniform float rippleCenterUvY;
 uniform float alpha;
 uniform float strength;
 uniform float zoom;

@@ -14,6 +14,7 @@ import com.exozet.sequentialimage.player.SequentialImagePlayerActivity
 import com.exozet.sequentialimage.player.parseAssetFile
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
+import kotlin.concurrent.fixedRateTimer
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,24 +31,28 @@ class MainActivity : AppCompatActivity() {
 
         val bitmap = ((image.drawable) as BitmapDrawable).bitmap
 
-        val vids = (1 until 92).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
-        var index = 0
-
         fish_eye.setOnClickListener {
-
-            glview.setBackground(loadBitmap(vids[++index])!!)
-            glview.setStrength(3.5f)
-            glview.visibility = View.VISIBLE
-
-
-//            defished.setImageBitmap(RemoveFishEye(bitmap, 3.5))
-//            defished.visibility = View.VISIBLE
+            defished.setImageBitmap(RemoveFishEye(bitmap, 3.5))
+            defished.visibility = View.VISIBLE
         }
 
+        val vids = (1 until 92).map { parseAssetFile(String.format("fish_eye/out%03d.png", it)) }.toTypedArray()
+        var index = 0
+
+        glview.addBackgroundImages(listOf(loadBitmap(vids[0])!!))
+
+        glview.setStrength(1.5f)
         fish_eye_gl.setOnClickListener {
 
-            glview.addBackgroundImages(listOf(bitmap))
-            glview.setStrength(3.5f)
+            fixedRateTimer(
+                    "bla",
+                    false,
+                    0.toLong(),
+                    period = (1000.toFloat() / 30.toFloat()).toLong(),
+                    action = {
+                        glview.setBackground(loadBitmap(vids[(++index) % vids.size - 1])!!)
+                    }
+            )
             glview.visibility = View.VISIBLE
         }
 
@@ -66,8 +71,9 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
     private fun loadBitmap(uri: Uri?): Bitmap? {
+
+        Log.v(this::class.java.simpleName, "loadingBitmap $uri")
 
         var bitmap: Bitmap? = null
         try {
