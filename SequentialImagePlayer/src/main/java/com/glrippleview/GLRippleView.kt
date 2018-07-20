@@ -44,6 +44,13 @@ class GLRippleView @JvmOverloads constructor(context: Context, attrs: AttributeS
     }
 
     /**
+     * Add images to cross-fade.
+     */
+    fun setBackground(image: Bitmap) {
+        renderer.setBackground(image)
+    }
+
+    /**
      * Set duration for cross-fade.
      */
     fun setFadeDuration(duration: Long) {

@@ -53,6 +53,10 @@ internal class RippleRenderer(private val context: Context,
         setRenderInfoList()
     }
 
+    fun setBackground(image: Bitmap) {
+        renderInfoList[0] = renderInfoList[0].copy(bgImage = image, textureId = loadTexture(image))
+    }
+
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         GLES20.glClearColor(0f, 0f, 0f, 1f)
 
