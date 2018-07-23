@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.math.MathUtils.clamp
 import com.exozet.sequentialimage.player.RemoveFishEye
 import com.exozet.sequentialimage.player.SequentialImagePlayerActivity
 import com.exozet.sequentialimage.player.parseAssetFile
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     0.toLong(),
                     period = (1000.toFloat() / 30.toFloat()).toLong(),
                     action = {
-                        glview.setBackground(loadBitmap(vids[(++index) % vids.size - 1])!!)
+                        glview.setBackground(loadBitmap(vids[clamp((++index) % vids.size - 1, 0, vids.size - 1)])!!)
                     }
             )
             glview.visibility = View.VISIBLE
@@ -60,7 +61,21 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val s = p1 / 10f
                 Log.v(MainActivity::class.java.simpleName, "strength: $s")
-                glview.setStrength(s)
+                glview.setStrength(s-5f)
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+            }
+        })
+
+        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+                val s = p1 / 10f
+                Log.v(MainActivity::class.java.simpleName, "zoom: $s")
+                glview.setZoom(s-5f)
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
