@@ -35,7 +35,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private val uuid: String by lazy { UUID.randomUUID().toString().take(8) }
 
-    var debug = true
+    var debug = false
 
     private fun log(message: String) {
         if (debug)
