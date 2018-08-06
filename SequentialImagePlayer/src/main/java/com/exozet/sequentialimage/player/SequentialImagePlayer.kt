@@ -21,6 +21,12 @@ import android.widget.SeekBar
 import androidx.annotation.IntRange
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.sequentialimageplayer_view.view.*
 import java.io.IOException
 import java.util.*
@@ -294,9 +300,48 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (uri == null)
             return
 
-        val bitmap = loadBitmap(uri)
-        viewHolder.setImageBitmap(bitmap)
+        when {
+            uri.toString().startsWith("file:///android_asset/") -> {
+                with(loadBitmap(uri)) {
+                    viewHolder.setImageBitmap(this)
+                    blurWith(this)
+                }
+            }
+            uri.toString().startsWith("http://") -> {
+                setImageWithGlide(uri)
+            }
+            uri.toString().startsWith("https://") -> {
+                setImageWithGlide(uri)
+            }
+            else -> {
+                with(loadBitmap(uri)) {
+                    viewHolder.setImageBitmap(this)
+                    blurWith(this)
+                }
+            }
+        }
+    }
 
+    private fun setImageWithGlide(uri: Uri?) {
+        Glide.with(this)
+                .asBitmap()
+                .load(uri)
+                .apply(RequestOptions
+                        .fitCenterTransform()
+                        .priority(Priority.HIGH)
+                        .dontAnimate()
+                        .skipMemoryCache(false)
+                        .override(viewHolder.width, viewHolder.height)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(object : SimpleTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        viewHolder.setImageBitmap(resource)
+                        blurWith(resource)
+                    }
+                })
+    }
+
+    private fun blurWith(bitmap: Bitmap?) {
         if (resources.configuration.orientation == ORIENTATION_PORTRAIT)
             if (bitmap?.width ?: 0 >= bitmap?.height ?: 0)
                 viewHolderBackground.blur(bitmap)

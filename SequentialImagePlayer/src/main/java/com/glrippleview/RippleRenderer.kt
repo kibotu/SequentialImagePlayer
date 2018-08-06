@@ -29,7 +29,7 @@ internal class RippleRenderer(private val context: Context,
 
     companion object {
         private val NS_PER_SECOND = TimeUnit.SECONDS.toNanos(1).toFloat()
-        private val NO_TEXTURE = -1
+        private const val NO_TEXTURE = -1
 
         private val VERTICES: FloatArray = floatArrayOf(
                 -1.0f, 1.0f, 0.0f, 1.0f,  // ↖ left top︎
@@ -108,8 +108,8 @@ internal class RippleRenderer(private val context: Context,
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-        this.width = width.toFloat()
-        this.height = height.toFloat()
+        this.width = height.toFloat()
+        this.height = width.toFloat()
 
         GLES20.glViewport(0, 0, width, height)
 
