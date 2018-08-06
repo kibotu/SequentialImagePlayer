@@ -39,7 +39,7 @@ internal class RippleRenderer(private val context: Context,
         )
     }
 
-    var debug = true
+    var debug = false
 
     private val renderInfoList: MutableList<RenderInfo> = mutableListOf()
     private var width: Float = 0f

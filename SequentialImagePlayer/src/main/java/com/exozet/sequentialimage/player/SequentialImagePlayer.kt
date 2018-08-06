@@ -55,6 +55,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
             if (field contentEquals value)
                 return
             field = value
+
+            loadImage(value.firstOrNull())
         }
 
     var swipeSpeed: Float = 1f
@@ -140,8 +142,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         addSwipeGesture()
 
-        loadImage(imageUris.firstOrNull())
-
         cancelBusy()
     }
 
@@ -168,50 +168,33 @@ class SequentialImagePlayer @JvmOverloads constructor(
             private val SWIPE_MAX_OF_PATH_X = 100
             private val SWIPE_MAX_OF_PATH_Y = 100
 
-            /** Rotation threshold for scroll (X axis direction)  */
-            val THRESHOLD_SCROLL_X = 0.02
-            /** Rotation threshold for scroll (Y axis direction)  */
-            val THRESHOLD_SCROLL_Y = 0.02
+            private var downX: Float = 0f
 
-            /** Rotation amount derivative parameter for scroll (X axis direction)  */
-            val ON_SCROLL_DIVIDER_X = 400.0f
-            /** Rotation amount derivative parameter for scroll (Y axis direction)  */
-            val ON_SCROLL_DIVIDER_Y = 400.0f
+            var index: Int = 0
 
-            override fun onDown(e: MotionEvent?): Boolean = true
+            override fun onDown(e: MotionEvent?): Boolean {
+                downX = e?.x ?: 0f
+                index = imageSwapper?.index ?: 0
+                return true
+            }
 
             override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean =
                     if (Math.abs(distanceX) > SWIPE_MAX_OF_PATH_X || Math.abs(distanceY) > SWIPE_MAX_OF_PATH_Y) {
                         false
                     } else {
-                        var diffX = distanceX / ON_SCROLL_DIVIDER_X
-                        var diffY = distanceY / ON_SCROLL_DIVIDER_Y
 
-                        if (Math.abs(diffX) < THRESHOLD_SCROLL_X) {
-                            diffX = 0.0f
-                        }
-                        if (Math.abs(diffY) < THRESHOLD_SCROLL_Y) {
-                            diffY = 0.0f
-                        }
+                        val dX = downX - (e2?.x
+                                ?: 0f)
 
-                        onScroll(distanceX, -distanceY)
+                        val dXw = (dX / 2) / measuredWidth
+
+                        onHorizontalScroll(dXw)
 
                         true
                     }
 
-            private fun onScroll(dX: Float, dY: Float) {
-                onHorizontalScroll(dX)
-                onVerticalScroll(dY)
-            }
-
-            private fun onVerticalScroll(deltaY: Float) {
-                // Log("onVerticalScroll deltaY=$deltaY")
-            }
-
             private fun onHorizontalScroll(deltaX: Float) {
-                val delta = deltaX * swipeSpeed
-                // Log("onHorizontalScroll deltaX=$deltaX / speed=$swipeSpeed -> delta=$delta")
-                imageSwapper?.swapImage((imageSwapper?.index ?: 0) + delta.roundToInt())
+                imageSwapper?.swapImage(index + (deltaX * max).roundToInt())
             }
         })
 
@@ -274,16 +257,13 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (autoPlay) stopAutoPlay()
     }
 
-    private fun onDestroy() {
-        stopAutoPlay()
-    }
-
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         viewHolder.scaleType = ImageView.ScaleType.FIT_CENTER
     }
 
     private fun startAutoPlay() {
+        viewHolder.removeCallbacks(null)
         viewHolder.post(imageSwapper)
     }
 
@@ -337,10 +317,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     private fun blurWith(bitmap: Bitmap?) {
-        if (resources.configuration.orientation == ORIENTATION_PORTRAIT)
+        if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {
             if (bitmap?.width ?: 0 >= bitmap?.height ?: 0)
                 viewHolderBackground.blur(bitmap)
-
+        }
 
         if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
             if (bitmap?.height ?: 0 >= bitmap?.width ?: 0)
@@ -384,8 +364,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
         internal const val BLUR_LETTERBOX = "BLUR_LETTERBOX"
 
         internal fun loopRange(value: Int, min: Int = 0, max: Int): Int = when {
-            value > max -> min
-            value < min -> max
+            value > max -> min + Math.abs(value)
+            value < min -> max - Math.abs(value)
             else -> value
         }
 
