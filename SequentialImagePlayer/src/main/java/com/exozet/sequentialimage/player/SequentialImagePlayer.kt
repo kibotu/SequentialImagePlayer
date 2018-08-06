@@ -125,6 +125,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.sequentialimageplayer_view, this, true)
+
+        onCreate()
     }
 
     private fun onCreate() {
@@ -141,7 +143,11 @@ class SequentialImagePlayer @JvmOverloads constructor(
         loadImage(imageUris.firstOrNull())
 
         cancelBusy()
+    }
 
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (visibility == View.VISIBLE) onResume() else onPause()
     }
 
     private fun initFpsSpinner() {
@@ -153,28 +159,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
                 fps = p2
             }
         }
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        busy()
-        onCreate()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        onDestroy()
-        cancelBusy()
-    }
-
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        super.onVisibilityChanged(changedView, visibility)
-        if (visibility == View.VISIBLE) onResume() else onPause()
-    }
-
-    override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
-        super.onWindowFocusChanged(hasWindowFocus)
-        if (hasWindowFocus) onResume() else onPause()
     }
 
     private fun addSwipeGesture() {
@@ -281,12 +265,12 @@ class SequentialImagePlayer @JvmOverloads constructor(
         })
     }
 
-    private fun onResume() {
+    fun onResume() {
         if (autoPlay) startAutoPlay()
     }
 
 
-    private fun onPause() {
+    fun onPause() {
         if (autoPlay) stopAutoPlay()
     }
 
