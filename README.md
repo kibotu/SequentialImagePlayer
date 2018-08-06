@@ -92,6 +92,7 @@ Atm only as module
     
 # Changelog
 
+* Supports onProgressChanged events, e.g.: onProgressChanged = { degreeIndicator.rotation = it * 360 }
 * Supports blurry letterbox effect
 * Supports being added as custom view
 * Supports translatable

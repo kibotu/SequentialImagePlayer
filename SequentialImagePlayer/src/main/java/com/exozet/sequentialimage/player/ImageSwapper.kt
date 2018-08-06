@@ -19,6 +19,8 @@ class ImageSwapper(var player: SequentialImagePlayer) : Runnable {
         player.loadImage(player.imageUris[this.index % player.max])
         player.seekBar.progress = this.index
         player.seekBar.max = player.max
+
+        player.onProgressChanged?.invoke(player.progress)
     }
 
     override fun run() {

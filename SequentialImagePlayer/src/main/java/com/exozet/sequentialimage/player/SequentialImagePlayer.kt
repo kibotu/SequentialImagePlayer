@@ -81,6 +81,17 @@ class SequentialImagePlayer @JvmOverloads constructor(
             fpsSpinner.goneUnless(!value)
         }
 
+    var progress: Float = 0f
+        get () {
+            return (imageSwapper?.index?.toFloat() ?: 1f) / max
+        }
+        set(value) {
+            field = value
+            onProgressChanged?.invoke(value)
+        }
+
+    var onProgressChanged: ((Float) -> Unit)? = null
+
     @IntRange(from = 1, to = 60)
     var fps: Int = 30
         set(value) {
@@ -370,11 +381,11 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     internal fun cancelBusy() {
-        progress.visibility = View.GONE
+        progressBar.visibility = View.GONE
     }
 
     internal fun busy() {
-        progress.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
     }
 
     companion object {
