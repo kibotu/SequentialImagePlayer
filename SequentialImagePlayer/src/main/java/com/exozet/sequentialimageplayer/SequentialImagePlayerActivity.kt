@@ -1,4 +1,4 @@
-package com.exozet.sequentialimage.player
+package com.exozet.sequentialimageplayer
 
 import android.content.Context
 import android.content.Intent
@@ -6,14 +6,14 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.AUTO_PLAY
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.BLUR_LETTERBOX
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.FPS
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.PLAY_BACKWARDS
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SHOW_CONTROLS
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.SWIPE_SPEED
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.TRANSLATABLE
-import com.exozet.sequentialimage.player.SequentialImagePlayer.Companion.ZOOMABLE
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.AUTO_PLAY
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.BLUR_LETTERBOX
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.FPS
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.PLAY_BACKWARDS
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.SHOW_CONTROLS
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.SWIPE_SPEED
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.TRANSLATABLE
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.ZOOMABLE
 import kotlinx.android.synthetic.main.activity_sequentialimage_player.*
 import java.lang.ref.WeakReference
 

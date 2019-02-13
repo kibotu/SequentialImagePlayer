@@ -1,4 +1,4 @@
-package r21nomi.com.glrippleview
+package com.exozet.sequentialimageplayer.glrippleview
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -12,7 +12,7 @@ import android.opengl.GLUtils
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.exozet.sequentialimage.player.R
+import com.exozet.sequentialimageplayer.R
 import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -314,14 +314,16 @@ internal class RippleRenderer(private val context: Context,
         renderInfoList.clear()
 
         bgImages.forEachIndexed { index, bgImage ->
-            renderInfoList.add(RenderInfo(
+            renderInfoList.add(
+                RenderInfo(
                     BufferUtil.convert(VERTICES),
                     null,
                     0,
-                    RippleRenderer.NO_TEXTURE,
+                    NO_TEXTURE,
                     bgImage,
                     if (index == 0) 1f else 0f
-            ))
+            )
+            )
         }
     }
 

@@ -1,4 +1,4 @@
-package com.exozet.sequentialimage.player
+package com.exozet.sequentialimageplayer
 
 import kotlinx.android.synthetic.main.sequentialimageplayer_view.view.*
 import kotlin.math.roundToLong

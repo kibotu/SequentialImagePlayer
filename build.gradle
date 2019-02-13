@@ -1,19 +1,34 @@
 buildscript {
-    ext.kotlin_version = '1.2.60'
+
+    apply from: "${project.rootDir}/Android-Dependencies/dependencies.gradle"
+
     repositories {
         google()
-        jcenter()
+        maven { url 'https://maven-central-eu.storage-download.googleapis.com/repos/central/data/' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha04'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath plugin.gradleBuildTools
+        classpath plugin.kotlinGradle
+        classpath plugin.kotlinApt
+        classpath plugin.dexcountGradle
+
+        classpath pluginLibrary.gradleBintrayPlugin
+        classpath pluginLibrary.mavenGradle
     }
 }
 
 allprojects {
+
+    apply from: "${project.rootDir}/Android-Dependencies/utils.gradle"
+
     repositories {
         google()
-        jcenter()
+        maven { url 'https://maven-central-eu.storage-download.googleapis.com/repos/central/data/' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://dl.bintray.com/exozetag/maven' }
     }
 }
 

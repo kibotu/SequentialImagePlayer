@@ -1,4 +1,4 @@
-package r21nomi.com.glrippleview
+package com.exozet.sequentialimageplayer.glrippleview
 
 import android.graphics.Bitmap
 import java.nio.FloatBuffer

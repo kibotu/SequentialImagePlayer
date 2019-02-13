@@ -1,4 +1,4 @@
-package com.exozet.sequentialimage.player
+package com.exozet.sequentialimageplayer
 
 import android.content.Context
 import android.util.AttributeSet

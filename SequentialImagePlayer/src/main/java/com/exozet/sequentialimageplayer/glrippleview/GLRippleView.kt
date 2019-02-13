@@ -1,4 +1,4 @@
-package r21nomi.com.glrippleview
+package com.exozet.sequentialimageplayer.glrippleview
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,8 +7,7 @@ import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import com.exozet.sequentialimage.player.R
-import com.glrippleview.ViewAspectRatioMeasurer
+import com.exozet.sequentialimageplayer.R
 
 /**
  * Created by Ryota Niinomi on 2017/05/24.

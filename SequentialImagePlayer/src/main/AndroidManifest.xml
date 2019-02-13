@@ -1,5 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.exozet.sequentialimage.player">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.exozet.sequentialimageplayer">
+
+    <uses-sdk tools:overrideLibrary="com.jsibbold.zoomage"/>
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -8,7 +12,7 @@
     <application>
 
         <activity
-            android:name="com.exozet.sequentialimage.player.SequentialImagePlayerActivity"
+            android:name=".SequentialImagePlayerActivity"
             android:configChanges="screenSize|orientation"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 

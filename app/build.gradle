@@ -1,36 +1,151 @@
+import java.security.spec.InvalidKeySpecException
+
+ext {
+    versionName = VERSION_NAME
+    VERSION_CODE = 1
+    VSC = VSC_PATH
+    isCi = true
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion compileSdkVer
+    buildToolsVersion buildToolsVer
 
     defaultConfig {
-        applicationId "com.exozet.sequentialimage.player.app"
-        minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        applicationId "com.exozet.sequentialimage.app"
+        minSdkVersion minSdkVer
+        targetSdkVersion targetSdkVer
+        versionCode isCi ? commitCount() : VERSION_CODE
+        versionName isCi ? simpleReleaseVersionName() : VERSION_NAME
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        debug {
-            debuggable true
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
 
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    signingConfigs {
+        try {
+            debug {
+                storeFile file(DEBUG_KEYSYORE_PATH)
+                storePassword DEBUG_STORE_PASSWORD
+                keyAlias DEBUG_KEYSTORE_ALLIAS
+                keyPassword DEBUG_KEY_PASSWORD
+            }
+        }
+        catch (final ignored) {
+            throw new InvalidKeySpecException('You should define DEBUG_KEYSTORE_ALLIAS, DEBUG_STORE_PASSWORD, DEBUG_KEY_PASSWORD in gradle.properties.')
+        }
+        try {
+            release {
+                storeFile file(RELEASE_KEYSYORE_PATH)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEYSTORE_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        } catch (final ignored) {
+            throw new InvalidKeySpecException('You should define RELEASE_KEYSTORE_ALIAS, RELEASE_STORE_PASSWORD, RELEASE_KEY_PASSWORD in gradle.properties.')
         }
     }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            pseudoLocalesEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            shrinkResources = false
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // region compile options
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // endregion
+
+    // region lint options
+
+    lintOptions {
+        disable 'InvalidPackage'
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true                // false by default
+        tasks.lint.enabled = false
+    }
+
+    // endregion
+
+    // region dex options
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+        maxProcessCount 8
+    }
+
+    // endregion
+
+    // region adb options
+
+    adbOptions {
+        timeOutInMs 10 * 60 * 1000 // 10 minutes
+    }
+
+    // endregion
+
+    // region exclude duplicated meta inf files
+
+    packagingOptions {
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/rxjava.properties'
+        exclude 'META-INF/app_debug.kotlin_module'
+    }
+
+    // endregion
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.0.0-beta01'
-    implementation 'com.android.support.constraint:constraint-layout:2.0.0-alpha1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation libs.kotlinJdk8
+    implementation libs.supportMultidex
+    implementation libs.supportAppCompat
+    implementation libs.supportDesign
+    implementation libs.constraintLayout
+    implementation libs.supportVectorDrawable
+
+    debugImplementation libs.leakcanaryDebug
+    debugImplementation libs.leakcanaryDebugSupportFragments
+    releaseImplementation libs.leakcanaryRelease
+
     implementation project(':SequentialImagePlayer')
+}
+
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
 }

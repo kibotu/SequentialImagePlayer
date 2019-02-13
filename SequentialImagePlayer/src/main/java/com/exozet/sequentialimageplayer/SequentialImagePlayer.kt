@@ -1,4 +1,4 @@
-package com.exozet.sequentialimage.player
+package com.exozet.sequentialimageplayer
 
 import android.content.Context
 import android.content.res.Configuration
@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.annotation.IntRange
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -378,7 +377,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private var blurryBitmap: Bitmap? = null
 
-    private fun AppCompatImageView.blur(bitmap: Bitmap?, radius: Int = 10, scaleFactor: Float = 8f) {
+    private fun ImageView.blur(bitmap: Bitmap?, radius: Int = 10, scaleFactor: Float = 8f) {
         if (!blurLetterbox)
             return
 

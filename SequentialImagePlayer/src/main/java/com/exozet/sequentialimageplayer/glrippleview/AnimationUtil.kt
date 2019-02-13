@@ -1,4 +1,4 @@
-package r21nomi.com.glrippleview
+package com.exozet.sequentialimageplayer.glrippleview
 
 /**
  * Created by Ryota Niinomi on 17/05/25.

@@ -1,4 +1,4 @@
-package com.exozet.sequentialimage.player.app
+package com.exozet.sequentialimage.app
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,9 +10,9 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.math.MathUtils.clamp
-import com.exozet.sequentialimage.player.RemoveFishEye
-import com.exozet.sequentialimage.player.SequentialImagePlayerActivity
-import com.exozet.sequentialimage.player.parseAssetFile
+import com.exozet.sequentialimageplayer.RemoveFishEye
+import com.exozet.sequentialimageplayer.SequentialImagePlayerActivity
+import com.exozet.sequentialimageplayer.parseAssetFile
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 import kotlin.concurrent.fixedRateTimer
@@ -24,10 +24,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         default_video.setOnClickListener {
-            startSequentialPlayer((1 until 317).map { parseAssetFile(String.format("default/out%d.png", it)) }.toTypedArray())
+            startSequentialPlayer((1 until 317).map {
+                parseAssetFile(
+                    String.format(
+                        "default/out%d.png",
+                        it
+                    )
+                )
+            }.toTypedArray())
         }
         stabilized_video.setOnClickListener {
-            startSequentialPlayer((1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray())
+            startSequentialPlayer((1 until 192).map {
+                parseAssetFile(
+                    String.format(
+                        "stabilized/out%03d.png",
+                        it
+                    )
+                )
+            }.toTypedArray())
         }
 
         val bitmap = ((image.drawable) as BitmapDrawable).bitmap
@@ -37,7 +51,14 @@ class MainActivity : AppCompatActivity() {
             defished.visibility = View.VISIBLE
         }
 
-        val vids = (1 until 92).map { parseAssetFile(String.format("fish_eye/out%03d.png", it)) }.toTypedArray()
+        val vids = (1 until 92).map {
+            parseAssetFile(
+                String.format(
+                    "fish_eye/out%03d.png",
+                    it
+                )
+            )
+        }.toTypedArray()
         var index = 0
 
         glview.addBackgroundImages(listOf(loadBitmap(vids[0])!!))

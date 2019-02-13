@@ -1,4 +1,4 @@
-package com.glrippleview;
+package com.exozet.sequentialimageplayer.glrippleview;
 
 import android.view.View.MeasureSpec;
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:layout_editor_absoluteY="81dp">
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/default_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/stabilized_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         app:layout_constraintStart_toEndOf="@+id/default_video"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/fish_eye"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         app:layout_constraintStart_toEndOf="@+id/stabilized_video"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/fish_eye_gl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
         app:layout_constraintStart_toEndOf="@+id/fish_eye"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
         app:srcCompat="@drawable/fish_eye"
         tools:layout_height="200dp" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/defished"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
         app:srcCompat="@drawable/fish_eye"
         tools:layout_height="200dp" />
 
-    <r21nomi.com.glrippleview.GLRippleView
+    <com.exozet.sequentialimageplayer.glrippleview.GLRippleView
         android:id="@+id/glview"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -95,7 +95,7 @@
         app:srcCompat="@drawable/fish_eye"
         tools:layout_height="200dp" />
 
-    <androidx.appcompat.widget.AppCompatSeekBar
+    <SeekBar
         android:id="@+id/seekBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
@@ -112,7 +112,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatSeekBar
+    <SeekBar
         android:id="@+id/seekBar2"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
