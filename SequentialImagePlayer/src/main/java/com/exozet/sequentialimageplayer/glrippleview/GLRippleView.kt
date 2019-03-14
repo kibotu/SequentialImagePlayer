@@ -106,7 +106,7 @@ class GLRippleView @JvmOverloads constructor(context: Context, attrs: AttributeS
     private fun setBackgroundImage(attrs: AttributeSet?) {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.GLRippleView)
 
-        typedArray.getDrawable(R.styleable.GLRippleView_imageBackground)?.let { drawable ->
+        typedArray.getDrawable(R.styleable.GLRippleView_ripple_view_background)?.let { drawable ->
             bgImage = (drawable as BitmapDrawable).bitmap
             typedArray.recycle()
         }
