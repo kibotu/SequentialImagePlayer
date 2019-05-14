@@ -9,6 +9,7 @@ import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.AUTO_PLAY
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.BLUR_LETTERBOX
+import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.DURATION
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.FPS
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.PLAY_BACKWARDS
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.SHOW_CONTROLS
@@ -38,7 +39,12 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             with(sequentialImagePlayer) {
 
                 imageUris = files.map { it as Uri }.toTypedArray()
-                fps = arguments.getInt(FPS) ?: 30
+                if (arguments.containsKey(FPS)) {
+                    fps = arguments.getInt(FPS)
+                }
+                if (arguments.containsKey(DURATION)) {
+                    duration = arguments.getInt(DURATION)
+                }
                 playBackwards = arguments.getBoolean(PLAY_BACKWARDS) ?: false
                 autoPlay = arguments.getBoolean(AUTO_PLAY) ?: true
                 zoomable = arguments.getBoolean(ZOOMABLE) ?: true
@@ -69,7 +75,11 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
         @FloatRange(from = -1.0, to = 1.0)
         private var swipeSpeed: Float = 1f
 
-        private var fps: Int = 30
+        @IntRange(from = 1)
+        private var fps: Int? = null
+
+        @IntRange(from = 0)
+        private var duration: Int? = null
 
         private var blurLetterbox: Boolean = true
 
@@ -111,8 +121,13 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             return this
         }
 
-        fun fps(@IntRange(from = 1, to = 60) fps: Int): Builder {
+        fun fps(@IntRange(from = 1) fps: Int): Builder {
             this.fps = fps
+            return this
+        }
+
+        fun duration(@IntRange(from = 0) duration: Int): Builder {
+            this.duration = duration
             return this
         }
 
@@ -125,7 +140,8 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             context.get()!!.startActivity(Intent(context.get(), SequentialImagePlayerActivity::class.java)
                 .apply {
                     putExtra(Uri::class.java.canonicalName, uris)
-                    putExtra(FPS, fps)
+                    fps?.let { putExtra(FPS, it) }
+                    duration?.let { putExtra(DURATION, it) }
                     putExtra(ZOOMABLE, zoomable)
                     putExtra(TRANSLATABLE, translatable)
                     putExtra(PLAY_BACKWARDS, playBackwards)

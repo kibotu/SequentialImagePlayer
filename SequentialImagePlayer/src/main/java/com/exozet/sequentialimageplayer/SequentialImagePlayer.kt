@@ -14,8 +14,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.annotation.FloatRange
@@ -28,11 +26,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.sequentialimageplayer_view.view.*
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 
 class SequentialImagePlayer @JvmOverloads constructor(
@@ -52,8 +59,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (debug)
             Log.d(TAG, message)
     }
-
-    private var imageSwapper: ImageSwapper? = null
 
     var imageUris: Array<Uri> = arrayOf()
         set(value) {
@@ -87,9 +92,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
 
     var progress: Float = 0f
-        get () {
-            return (imageSwapper?.index?.toFloat() ?: 1f) / max
-        }
+        get () = currentItem / max.toFloat()
         set(value) {
             field = value
             onProgressChanged?.invoke(value)
@@ -101,11 +104,14 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var fps: Int = 30
         set(value) {
             field = value
-            with(fpsSpinner) {
-                adapter =
-                    ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
-                setSelection(value - 1)
-            }
+            log("fps=$field")
+        }
+
+    var duration: Int = 10000
+        set(value) {
+            field = value
+            fps = (max.toFloat() / value * 1000f).roundToInt()
+            log("duration=$field max=$max fps=$fps")
         }
 
     var zoomable: Boolean = true
@@ -136,13 +142,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     private fun onCreate() {
-        imageSwapper = ImageSwapper(this)
 
         initSeekBar()
 
         autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
-
-        initFpsSpinner()
 
         addSwipeGesture()
 
@@ -154,16 +157,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (visibility == View.VISIBLE) onResume() else onPause()
     }
 
-    private fun initFpsSpinner() {
-        fpsSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-            }
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                fps = p2
-            }
-        }
-    }
 
     /**
      * Converts dp to pixel.
@@ -190,34 +183,28 @@ class SequentialImagePlayer @JvmOverloads constructor(
             log("onIsScrollingChanged isScrolling=$it")
             if (it) {
                 if (autoPlay) stopAutoPlay()
-                startScrollingSeekPosition = imageSwapper?.index ?: 0
+                startScrollingSeekPosition = currentItem
             } else {
                 if (autoPlay) startAutoPlay()
             }
 
-            log("onIsScrollingChanged viewHolder.isZoomable=${viewHolder.isZoomable} viewHolder.isTranslatable=${viewHolder.isTranslatable} zoomable=$zoomable translatable=$translatable")
+            log("onIsScrollingChanged autoPlay=$autoPlay viewHolder.isZoomable=${viewHolder.isZoomable} viewHolder.isTranslatable=${viewHolder.isTranslatable} zoomable=$zoomable translatable=$translatable")
         }
 
         swipe_detector?.onScroll { percentX, percentY ->
-
-            val duration = max
-            val currentPosition = imageSwapper?.index ?: 0
-
             val maxPercent = swipeSpeed
             val scaledPercent = percentX * maxPercent
-            val percentOfDuration = scaledPercent * -1 * duration + startScrollingSeekPosition
+            val percentOfDuration = scaledPercent * -1 * max + startScrollingSeekPosition
             // shift in position domain and ensure circularity
-            val newSeekPosition = ((percentOfDuration + duration) % duration).roundToInt().absoluteValue
-            log("onScroll percentX=$percentX scaledPercent=$scaledPercent currentPosition=$currentPosition newPosition=newSeekPosition duration=$duration")
-
-            imageSwapper?.swapImage(newSeekPosition)
+            val newSeekPosition = ((percentOfDuration + max) % max).roundToInt().absoluteValue
+            swapImage(newSeekPosition)
         }
     }
 
     private fun initSeekBar() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                imageSwapper?.swapImage(progress)
+                swapImage(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -234,7 +221,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (autoPlay) startAutoPlay()
     }
 
-
     fun onPause() {
         if (autoPlay) stopAutoPlay()
     }
@@ -244,13 +230,66 @@ class SequentialImagePlayer @JvmOverloads constructor(
         viewHolder.scaleType = ImageView.ScaleType.FIT_CENTER
     }
 
-    private fun startAutoPlay() {
-        viewHolder.removeCallbacks(null)
-        viewHolder.post(imageSwapper)
+    private var subscription: CompositeDisposable = CompositeDisposable()
+
+    var currentItem = 0
+
+    fun swapImage(index: Int) {
+        if (max <= 0)
+            return
+
+        currentItem = (index + max) % max
+        loadImage(imageUris[currentItem])
+        seekBar.progress = currentItem
+        seekBar.max = max
+
+        onProgressChanged?.invoke(progress)
     }
 
-    private fun stopAutoPlay() {
-        viewHolder.removeCallbacks(imageSwapper)
+    fun nextImage() {
+
+//        log("nextImage currentItem=$currentItem")
+
+        currentItem = if (!playDirectionSwitch.isChecked) currentItem + 1 else currentItem - 1
+
+        busy()
+        swapImage(currentItem)
+
+        cancelBusy()
+    }
+
+    val interval by lazy {
+        val intervalDuration = (1000f / fps).roundToLong()
+        log("intervalDuration=$intervalDuration")
+        Observable.interval(intervalDuration, TimeUnit.MILLISECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError { log("${it.message}") }
+    }
+
+    val intervalSubject by lazy {
+        PublishSubject.create<Long>().also {
+            interval.subscribe(it)
+        }
+    }
+
+    var disposable: Disposable? = null
+
+    fun startAutoPlay() {
+        stopAutoPlay()
+        log("startAutoPlay")
+
+        disposable = intervalSubject.subscribe {
+            nextImage()
+        }.addTo(subscription)
+    }
+
+    fun stopAutoPlay() {
+        log("stopAutoPlay")
+        if (disposable?.isDisposed == false) {
+            log("stopAutoPlay dispose")
+            disposable?.dispose()
+        }
     }
 
     internal fun loadImage(uri: Uri?) {
@@ -286,7 +325,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             .dontAnimate()
             .skipMemoryCache(false)
             .override(viewHolder.width, viewHolder.height)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
     }
 
     private fun setImageWithGlide(uri: Uri?) {
@@ -341,6 +380,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
     companion object {
 
         internal const val FPS = "FPS"
+        internal const val DURATION = "DURATION"
         internal const val ZOOMABLE = "ZOOMABLE"
         internal const val TRANSLATABLE = "TRANSLATABLE"
         internal const val PLAY_BACKWARDS = "PLAY_BACKWARDS"
@@ -348,12 +388,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
         internal const val SHOW_CONTROLS = "SHOW_CONTROLS"
         internal const val SWIPE_SPEED = "SWIPE_SPEED"
         internal const val BLUR_LETTERBOX = "BLUR_LETTERBOX"
-
-        internal fun loopRange(value: Int, min: Int = 0, max: Int): Int = when {
-            value > max -> min + Math.abs(value)
-            value < min -> max - Math.abs(value)
-            else -> value
-        }
 
         internal fun View.goneUnless(isGone: Boolean = true) {
             visibility = if (isGone) View.GONE else View.VISIBLE

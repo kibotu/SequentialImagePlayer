@@ -130,7 +130,8 @@ class MainActivity : AppCompatActivity() {
         SequentialImagePlayerActivity.Builder
             .with(this)
             .uris(list)
-            .fps(30) // default: 30
+            .fps(9) // default: 30
+//            .duration(30000) // default: 30000
             .playBackwards(false) // default: false
             .autoPlay(false) // default: true
             .zoomable(true) // default: true
