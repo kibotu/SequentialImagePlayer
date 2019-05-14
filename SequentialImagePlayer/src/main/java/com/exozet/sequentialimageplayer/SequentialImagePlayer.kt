@@ -325,7 +325,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             .dontAnimate()
             .skipMemoryCache(false)
             .override(viewHolder.width, viewHolder.height)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
     }
 
     private fun setImageWithGlide(uri: Uri?) {
