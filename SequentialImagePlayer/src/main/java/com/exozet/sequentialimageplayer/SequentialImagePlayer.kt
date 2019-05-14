@@ -13,7 +13,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -47,7 +46,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private val uuid: String by lazy { UUID.randomUUID().toString().take(8) }
 
-    var debug = true
+    var debug = false
 
     private fun log(message: String) {
         if (debug)
@@ -182,6 +181,9 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         swipe_detector.scrollListener.thresholdX = 3f.px
         swipe_detector.scrollListener.thresholdY = 3f.px
+
+        // connect swipe detector
+        viewHolder.view = swipe_detector
 
         // toggle video playback based on scrolling state
         swipe_detector?.onIsScrollingChanged {

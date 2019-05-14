@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
             .playBackwards(false) // default: false
             .autoPlay(false) // default: true
             .zoomable(true) // default: true
-            .translatable(false) // default: true
+            .translatable(true) // default: true
             .showControls() // default: false
             .swipeSpeed(0.85f) // default: 1
             .blurLetterbox() // default: true

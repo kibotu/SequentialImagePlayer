@@ -47,7 +47,7 @@ internal open class SwipeDistanceView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        parent.requestDisallowInterceptTouchEvent(requestDisallowInterceptTouchEvent)
+//        parent.requestDisallowInterceptTouchEvent(requestDisallowInterceptTouchEvent)
         return when {
             event?.actionMasked == MotionEvent.ACTION_DOWN && event.pointerCount <= 1 -> {
                 gestureDetector.onTouchEvent(event)
