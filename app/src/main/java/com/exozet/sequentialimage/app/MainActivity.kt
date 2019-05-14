@@ -67,13 +67,13 @@ class MainActivity : AppCompatActivity() {
         fish_eye_gl.setOnClickListener {
 
             fixedRateTimer(
-                    "bla",
-                    false,
-                    0.toLong(),
-                    period = (1000.toFloat() / 30.toFloat()).toLong(),
-                    action = {
-                        glview.setBackground(loadBitmap(vids[clamp((++index) % vids.size - 1, 0, vids.size - 1)])!!)
-                    }
+                "bla",
+                false,
+                0.toLong(),
+                period = (1000.toFloat() / 30.toFloat()).toLong(),
+                action = {
+                    glview.setBackground(loadBitmap(vids[clamp((++index) % vids.size - 1, 0, vids.size - 1)])!!)
+                }
             )
             glview.visibility = View.VISIBLE
         }
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val s = p1 / 10f
                 Log.v(MainActivity::class.java.simpleName, "strength: $s")
-                glview.setStrength(s-5f)
+                glview.setStrength(s - 5f)
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 val s = p1 / 10f
                 Log.v(MainActivity::class.java.simpleName, "zoom: $s")
-                glview.setZoom(s-5f)
+                glview.setZoom(s - 5f)
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -128,16 +128,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun startSequentialPlayer(list: Array<Uri>) {
         SequentialImagePlayerActivity.Builder
-                .with(this)
-                .uris(list)
-                .fps(30) // default: 30
-                .playBackwards(false) // default: false
-                .autoPlay() // default: true
-                .zoomable() // default: true
-                .translatable() // default: true
-                .showControls() // default: false
-                .swipeSpeed(0.8f) // default: 1
-                .blurLetterbox() // default: true
-                .startActivity()
+            .with(this)
+            .uris(list)
+            .fps(30) // default: 30
+            .playBackwards(false) // default: false
+            .autoPlay(false) // default: true
+            .zoomable(true) // default: true
+            .translatable(false) // default: true
+            .showControls() // default: false
+            .swipeSpeed(0.85f) // default: 1
+            .blurLetterbox() // default: true
+            .startActivity()
     }
 }

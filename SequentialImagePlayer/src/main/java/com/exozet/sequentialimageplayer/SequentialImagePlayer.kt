@@ -10,7 +10,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.net.Uri
 import android.util.AttributeSet
-import android.view.GestureDetector
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -18,7 +19,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.SeekBar
+import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
+import androidx.annotation.LayoutRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -29,22 +32,26 @@ import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.sequentialimageplayer_view.view.*
 import java.io.IOException
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
 class SequentialImagePlayer @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
+
+    @LayoutRes
+    val layout = R.layout.sequentialimageplayer_view
 
     private val TAG by lazy { "${this::class.java.simpleName}:$uuid" }
 
     private val uuid: String by lazy { UUID.randomUUID().toString().take(8) }
 
-    var debug = false
+    var debug = true
 
     private fun log(message: String) {
         if (debug)
-            android.util.Log.d(TAG, message)
+            Log.d(TAG, message)
     }
 
     private var imageSwapper: ImageSwapper? = null
@@ -58,10 +65,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
             loadImage(value.firstOrNull())
         }
 
-    var swipeSpeed: Float = 1f
-        set(value) {
-            field = value / 10f
-        }
+    @FloatRange(from = -1.0, to = 1.0)
+    var swipeSpeed: Float = 0.75f
 
     var autoPlay: Boolean = false
         get() = autoplaySwitch.isChecked
@@ -70,7 +75,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             autoplaySwitch.isChecked = value
         }
 
-    internal var max: Int = 0
+    internal val max
         get() = imageUris.size - 1
 
     var showControls: Boolean = false
@@ -98,7 +103,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
         set(value) {
             field = value
             with(fpsSpinner) {
-                adapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
+                adapter =
+                    ArrayAdapter(context, android.R.layout.simple_spinner_item, (1 until 61).map { "$it" }.toList())
                 setSelection(value - 1)
             }
         }
@@ -125,7 +131,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(R.layout.sequentialimageplayer_view, this, true)
+        inflater.inflate(layout, this, true)
 
         onCreate()
     }
@@ -160,74 +166,49 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Converts dp to pixel.
+     */
+    private val Float.px: Float
+        get() = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            this,
+            context!!.resources.displayMetrics
+        )
+
     private fun addSwipeGesture() {
 
-        val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        var startScrollingSeekPosition = 0
 
-            private val SWIPE_MAX_OF_PATH_X = 100
-            private val SWIPE_MAX_OF_PATH_Y = 100
+        swipe_detector.scrollListener.thresholdX = 3f.px
+        swipe_detector.scrollListener.thresholdY = 3f.px
 
-            private var downX: Float = 0f
-
-            var index: Int = 0
-
-            override fun onDown(e: MotionEvent?): Boolean {
-                downX = e?.x ?: 0f
-                index = imageSwapper?.index ?: 0
-                return true
+        // toggle video playback based on scrolling state
+        swipe_detector?.onIsScrollingChanged {
+            log("onIsScrollingChanged isScrolling=$it")
+            if (it) {
+                if (autoPlay) stopAutoPlay()
+                startScrollingSeekPosition = imageSwapper?.index ?: 0
+            } else {
+                if (autoPlay) startAutoPlay()
             }
 
-            override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean =
-                    if (Math.abs(distanceX) > SWIPE_MAX_OF_PATH_X || Math.abs(distanceY) > SWIPE_MAX_OF_PATH_Y) {
-                        false
-                    } else {
+            log("onIsScrollingChanged viewHolder.isZoomable=${viewHolder.isZoomable} viewHolder.isTranslatable=${viewHolder.isTranslatable} zoomable=$zoomable translatable=$translatable")
+        }
 
-                        val dX = downX - (e2?.x
-                                ?: 0f)
+        swipe_detector?.onScroll { percentX, percentY ->
 
-                        val dXw = (dX / 2) / measuredWidth
+            val duration = max
+            val currentPosition = imageSwapper?.index ?: 0
 
-                        onHorizontalScroll(dXw)
+            val maxPercent = swipeSpeed
+            val scaledPercent = percentX * maxPercent
+            val percentOfDuration = scaledPercent * -1 * duration + startScrollingSeekPosition
+            // shift in position domain and ensure circularity
+            val newSeekPosition = ((percentOfDuration + duration) % duration).roundToInt().absoluteValue
+            log("onScroll percentX=$percentX scaledPercent=$scaledPercent currentPosition=$currentPosition newPosition=newSeekPosition duration=$duration")
 
-                        true
-                    }
-
-            private fun onHorizontalScroll(deltaX: Float) {
-                imageSwapper?.swapImage(index + (deltaX * max).roundToInt())
-            }
-        })
-
-        viewHolder.setOnTouchListener { _, motionEvent ->
-
-            viewHolder.isZoomable = zoomable
-            viewHolder.isTranslatable = zoomable
-
-            when (motionEvent.actionMasked) {
-                MotionEvent.ACTION_UP -> {
-                    if (autoPlay) startAutoPlay()
-                    super.onTouchEvent(motionEvent)
-                }
-                MotionEvent.ACTION_DOWN -> {
-                    if (autoPlay) stopAutoPlay()
-                    if (motionEvent.pointerCount <= 1) {
-                        viewHolder.isZoomable = false
-                        viewHolder.isTranslatable = false
-                        gestureDetector.onTouchEvent(motionEvent)
-                    } else
-                        super.onTouchEvent(motionEvent)
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    if (motionEvent.pointerCount <= 1) {
-                        viewHolder.isZoomable = false
-                        viewHolder.isTranslatable = false
-                        gestureDetector.onTouchEvent(motionEvent)
-                    } else
-                        super.onTouchEvent(motionEvent)
-                }
-                else -> {
-                    super.onTouchEvent(motionEvent)
-                }
-            }
+            imageSwapper?.swapImage(newSeekPosition)
         }
     }
 
@@ -296,23 +277,27 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
     }
 
+    val requestOptions by lazy {
+        RequestOptions
+            .fitCenterTransform()
+            .priority(Priority.HIGH)
+            .dontAnimate()
+            .skipMemoryCache(false)
+            .override(viewHolder.width, viewHolder.height)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+    }
+
     private fun setImageWithGlide(uri: Uri?) {
         Glide.with(this)
-                .asBitmap()
-                .load(uri)
-                .apply(RequestOptions
-                        .fitCenterTransform()
-                        .priority(Priority.HIGH)
-                        .dontAnimate()
-                        .skipMemoryCache(false)
-                        .override(viewHolder.width, viewHolder.height)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL))
-                .into(object : SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        viewHolder.setImageBitmap(resource)
-                        blurWith(resource)
-                    }
-                })
+            .asBitmap()
+            .load(uri)
+            .apply(requestOptions)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    viewHolder.setImageBitmap(resource)
+                    blurWith(resource)
+                }
+            })
     }
 
     private fun blurWith(bitmap: Bitmap?) {
@@ -377,17 +362,34 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private var blurryBitmap: Bitmap? = null
 
+
     private fun ImageView.blur(bitmap: Bitmap?, radius: Int = 10, scaleFactor: Float = 8f) {
         if (!blurLetterbox)
             return
 
-        if (bitmap == null || measuredWidth <= 0 || measuredHeight <= 0)
+        if (bitmap == null)
             return
+
+        var width = measuredWidth
+        var height = measuredHeight
+
+        if (width <= 0 || height <= 0) {
+            width = context?.resources?.configuration?.screenWidthDp?.toFloat()?.px?.toInt() ?: 0
+            height = context?.resources?.configuration?.screenHeightDp?.toFloat()?.px?.toInt() ?: 0
+        }
+
+        if (width <= 0 || height <= 0) {
+            return
+        }
 
         val startMs = System.currentTimeMillis()
 
         if (blurryBitmap == null)
-            blurryBitmap = Bitmap.createBitmap((measuredWidth / scaleFactor).toInt(), (measuredHeight / scaleFactor).toInt(), Bitmap.Config.RGB_565)
+            blurryBitmap = Bitmap.createBitmap(
+                (width / scaleFactor).toInt(),
+                (height / scaleFactor).toInt(),
+                Bitmap.Config.RGB_565
+            )
 
         val canvas = Canvas(blurryBitmap)
         canvas.translate(-left.toFloat() + -measuredWidth / 2f, -top.toFloat() / 2f)
@@ -398,6 +400,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         setImageBitmap(blurryBitmap)
 
-        log("view=[$measuredWidth:$measuredHeight]: bitmap=[${bitmap.width}:${bitmap.height}] overlay=[${blurryBitmap?.width}:${blurryBitmap?.height}] in ${System.currentTimeMillis() - startMs} ms")
+        // log("view=[$measuredWidth:$measuredHeight]: bitmap=[${bitmap.width}:${bitmap.height}] overlay=[${blurryBitmap?.width}:${blurryBitmap?.height}] in ${System.currentTimeMillis() - startMs} ms")
     }
 }

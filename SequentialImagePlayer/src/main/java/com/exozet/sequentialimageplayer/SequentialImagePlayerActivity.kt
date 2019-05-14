@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.AUTO_PLAY
@@ -65,6 +66,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
 
         private var showControls: Boolean = false
 
+        @FloatRange(from = -1.0, to = 1.0)
         private var swipeSpeed: Float = 1f
 
         private var fps: Int = 30
@@ -76,7 +78,10 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             return this
         }
 
-        fun swipeSpeed(swipeSpeed: Float): Builder {
+        /**
+         * percentage of swiped screen to total duration, e.g. swiping from 0 to screen width seeks from 0 to frame count
+         */
+        fun swipeSpeed(@FloatRange(from = -1.0, to = 1.0) swipeSpeed: Float): Builder {
             this.swipeSpeed = swipeSpeed
             return this
         }
@@ -116,10 +121,12 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
             return this
         }
 
-        fun startActivity() = context.get()!!.startActivity(Intent(context.get(), SequentialImagePlayerActivity::class.java)
+        fun startActivity() =
+            context.get()!!.startActivity(Intent(context.get(), SequentialImagePlayerActivity::class.java)
                 .apply {
                     putExtra(Uri::class.java.canonicalName, uris)
                     putExtra(FPS, fps)
+                    putExtra(ZOOMABLE, zoomable)
                     putExtra(TRANSLATABLE, translatable)
                     putExtra(PLAY_BACKWARDS, playBackwards)
                     putExtra(AUTO_PLAY, autoPlay)

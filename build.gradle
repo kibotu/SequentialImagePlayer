@@ -9,7 +9,7 @@ buildscript {
 
     }
     dependencies {
-        classpath plugin.gradleBuildTools
+        classpath plugin.gradleBuildToolsCanary
         classpath plugin.kotlinGradle
         classpath plugin.kotlinApt
         classpath plugin.dexcountGradle
