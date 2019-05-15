@@ -27,6 +27,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
@@ -76,10 +77,13 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
 
     val requestOptions by lazy {
+
         RequestOptions
             .fitCenterTransform()
             .priority(Priority.IMMEDIATE)
             .dontAnimate()
+            .override(1024)
+            .downsample(DownsampleStrategy.CENTER_INSIDE)
             .skipMemoryCache(false)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
     }
@@ -345,8 +349,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
         Glide.with(this)
             .asBitmap()
             .load(uri)
-            .transition(withCrossFade(crossFadeFactory))
             .apply(requestOptions)
+            .transition(withCrossFade(crossFadeFactory))
             .into(bitmapImageViewTarget)
     }
 
