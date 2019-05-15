@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
 import android.util.Log
@@ -22,9 +23,15 @@ import androidx.annotation.LayoutRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.bumptech.glide.request.transition.Transition
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -65,9 +72,57 @@ class SequentialImagePlayer @JvmOverloads constructor(
             if (field contentEquals value)
                 return
             field = value
-
-            loadImage(value.firstOrNull())
+            preload()
         }
+
+    val requestOptions by lazy {
+        RequestOptions
+            .fitCenterTransform()
+            .priority(Priority.IMMEDIATE)
+            .dontAnimate()
+            .skipMemoryCache(false)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+    }
+
+    private var preloadCounter = 0
+
+    private fun preload() {
+        preloadCounter = 0
+
+        numberProgressBar.max = imageUris.size
+
+        busy()
+
+        imageUris.forEach {
+
+            Glide.with(context)
+                .applyDefaultRequestOptions(requestOptions)
+                .load(it)
+                .addListener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        onProgressDownload()
+                        log("preload onLoadFailed count=$preloadCounter size=${imageUris.size} $model")
+                        return false
+                    }
+
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        onProgressDownload()
+                        log("preload onResourceReady count=$preloadCounter size=${imageUris.size} $model")
+                        return false
+                    }
+                })
+                .preload()
+        }
+    }
+
+    private fun onProgressDownload() {
+        ++preloadCounter
+        numberProgressBar.progress = preloadCounter
+        if (preloadCounter == imageUris.size) {
+            cancelBusy()
+            loadImage(imageUris.first())
+        }
+    }
 
     @FloatRange(from = -1.0, to = 1.0)
     var swipeSpeed: Float = 0.75f
@@ -148,8 +203,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
         autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
 
         addSwipeGesture()
-
-        cancelBusy()
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
@@ -230,7 +283,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         viewHolder.scaleType = ImageView.ScaleType.FIT_CENTER
     }
 
-    private var subscription: CompositeDisposable = CompositeDisposable()
+    private var subscription = CompositeDisposable()
 
     var currentItem = 0
 
@@ -247,15 +300,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     fun nextImage() {
-
-//        log("nextImage currentItem=$currentItem")
-
         currentItem = if (!playDirectionSwitch.isChecked) currentItem + 1 else currentItem - 1
-
-        busy()
         swapImage(currentItem)
-
-        cancelBusy()
     }
 
     val interval by lazy {
@@ -292,53 +338,25 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
     }
 
-    internal fun loadImage(uri: Uri?) {
+    fun loadImage(uri: Uri?) {
         if (uri == null)
             return
 
-        when {
-            uri.toString().startsWith("file:///android_asset/") -> {
-                with(loadBitmap(uri)) {
-                    viewHolder.setImageBitmap(this)
-                    blurWith(this)
-                }
-            }
-            uri.toString().startsWith("http://") -> {
-                setImageWithGlide(uri)
-            }
-            uri.toString().startsWith("https://") -> {
-                setImageWithGlide(uri)
-            }
-            else -> {
-                with(loadBitmap(uri)) {
-                    viewHolder.setImageBitmap(this)
-                    blurWith(this)
-                }
-            }
-        }
-    }
-
-    val requestOptions by lazy {
-        RequestOptions
-            .fitCenterTransform()
-            .priority(Priority.HIGH)
-            .dontAnimate()
-            .skipMemoryCache(false)
-            .override(viewHolder.width, viewHolder.height)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-    }
-
-    private fun setImageWithGlide(uri: Uri?) {
         Glide.with(this)
             .asBitmap()
             .load(uri)
+            .transition(withCrossFade(crossFadeFactory))
             .apply(requestOptions)
-            .into(object : SimpleTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    viewHolder.setImageBitmap(resource)
-                    blurWith(resource)
-                }
-            })
+            .into(bitmapImageViewTarget)
+    }
+
+    private val crossFadeFactory by lazy { DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build() }
+
+    private val bitmapImageViewTarget = object : SimpleTarget<Bitmap>() {
+        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+            viewHolder.setImageBitmap(resource)
+            blurWith(resource)
+        }
     }
 
     private fun blurWith(bitmap: Bitmap?) {
@@ -370,11 +388,11 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     internal fun cancelBusy() {
-        progressBar.visibility = View.GONE
+        numberProgressBar.visibility = View.GONE
     }
 
     internal fun busy() {
-        progressBar.visibility = View.VISIBLE
+        numberProgressBar.visibility = View.VISIBLE
     }
 
     companion object {

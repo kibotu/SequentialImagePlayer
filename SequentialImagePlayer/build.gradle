@@ -109,6 +109,8 @@ dependencies {
     kapt libs.glideAnnotationsProcessor
 
     implementation libs.zoomage
+
+    implementation libs.numberprogressbar
 }
 
 // endregion
