@@ -22,7 +22,6 @@
         android:id="@+id/viewHolder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -115,5 +114,19 @@
         style="@style/NumberProgressBar_Funny_Orange"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_height="wrap_content" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:id="@+id/swapIconView" android:visibility="gone">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:focusable="false"
+                android:rotation="270"
+                app:srcCompat="@drawable/ic_swipe_icon" app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" android:clickable="false"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
+import android.transition.Fade
+import android.transition.TransitionManager
 import android.util.AttributeSet
 import android.util.Log
 import android.util.TypedValue
@@ -103,13 +106,24 @@ class SequentialImagePlayer @JvmOverloads constructor(
                 .applyDefaultRequestOptions(requestOptions)
                 .load(it)
                 .addListener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         onProgressDownload()
                         log("preload onLoadFailed count=$preloadCounter size=${imageUris.size} $model")
                         return false
                     }
 
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         onProgressDownload()
                         log("preload onResourceReady count=$preloadCounter size=${imageUris.size} $model")
                         return false
@@ -125,6 +139,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         if (preloadCounter == imageUris.size) {
             cancelBusy()
             loadImage(imageUris.first())
+            fadeInSwipeView()
         }
     }
 
@@ -459,5 +474,12 @@ class SequentialImagePlayer @JvmOverloads constructor(
         setImageBitmap(blurryBitmap)
 
         // log("view=[$measuredWidth:$measuredHeight]: bitmap=[${bitmap.width}:${bitmap.height}] overlay=[${blurryBitmap?.width}:${blurryBitmap?.height}] in ${System.currentTimeMillis() - startMs} ms")
+    }
+
+    private fun fadeInSwipeView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            TransitionManager.beginDelayedTransition(swapIconView, Fade(Fade.OUT))
+        }
+        swapIconView.visibility = View.VISIBLE
     }
 }
