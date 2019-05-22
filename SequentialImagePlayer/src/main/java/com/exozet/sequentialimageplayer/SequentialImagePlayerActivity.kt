@@ -3,11 +3,7 @@ package com.exozet.sequentialimageplayer
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.transition.Fade
-import android.transition.TransitionManager
-import android.view.View
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +17,10 @@ import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.SWIPE_SP
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.TRANSLATABLE
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.ZOOMABLE
 import kotlinx.android.synthetic.main.activity_sequentialimage_player.*
-import kotlinx.android.synthetic.main.sequentialimageplayer_view.*
 import java.lang.ref.WeakReference
 
 
 class SequentialImagePlayerActivity : AppCompatActivity() {
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -58,11 +52,6 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 swipeSpeed = arguments.getFloat(SWIPE_SPEED) ?: 1f
                 blurLetterbox = arguments.getBoolean(BLUR_LETTERBOX) ?: true
             }
-        }
-
-        swapIconView.setOnTouchListener { v, event ->
-            fadeOutSwipeView()
-            false
         }
     }
 
@@ -164,12 +153,5 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
         companion object {
             fun with(context: Context): Builder = Builder().also { it.context = WeakReference(context) }
         }
-    }
-
-    private fun fadeOutSwipeView() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionManager.beginDelayedTransition(swapIconView, Fade(Fade.OUT))
-        }
-        swapIconView.visibility = View.GONE
     }
 }

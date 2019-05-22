@@ -254,6 +254,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         swipe_detector?.onIsScrollingChanged {
             log("onIsScrollingChanged isScrolling=$it")
             if (it) {
+                if (swapIconView.visibility == View.VISIBLE) fadeOutSwipeView()
                 if (autoPlay) stopAutoPlay()
                 startScrollingSeekPosition = currentItem
             } else {
@@ -481,5 +482,12 @@ class SequentialImagePlayer @JvmOverloads constructor(
             TransitionManager.beginDelayedTransition(swapIconView, Fade(Fade.OUT))
         }
         swapIconView.visibility = View.VISIBLE
+    }
+
+    private fun fadeOutSwipeView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            TransitionManager.beginDelayedTransition(swapIconView, Fade(Fade.OUT))
+        }
+        swapIconView.visibility = View.GONE
     }
 }
