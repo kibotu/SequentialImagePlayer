@@ -398,7 +398,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             val istr = if (uri.toString().startsWith("file:///android_asset/"))
                 context.assets.open(uri.toString().removePrefix("file:///android_asset/"))
             else
-                context.contentResolver.openInputStream(uri)
+                context.contentResolver.openInputStream(uri!!)
 
             bitmap = BitmapFactory.decodeStream(istr)
         } catch (e: IOException) {
@@ -465,7 +465,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
                 Bitmap.Config.RGB_565
             )
 
-        val canvas = Canvas(blurryBitmap)
+        val canvas = Canvas(blurryBitmap!!)
         canvas.translate(-left.toFloat() + -measuredWidth / 2f, -top.toFloat() / 2f)
 //        canvas.scale(1 / scaleFactor, 1 / scaleFactor)
         canvas.drawBitmap(bitmap, 0f, 0f, paint)

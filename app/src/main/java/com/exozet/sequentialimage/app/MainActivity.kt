@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             val istr = if (uri.toString().startsWith("file:///android_asset/"))
                 assets.open(uri.toString().removePrefix("file:///android_asset/"))
             else
-                contentResolver.openInputStream(uri)
+                contentResolver.openInputStream(uri!!)
 
             bitmap = BitmapFactory.decodeStream(istr)
         } catch (e: IOException) {
