@@ -102,7 +102,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         imageUris.forEach {
 
-            GlideApp.with(context!!.applicationContext!!)
+            Glide.with(context!!.applicationContext!!)
                 .applyDefaultRequestOptions(requestOptions)
                 .load(it)
                 .addListener(object : RequestListener<Drawable> {
