@@ -106,6 +106,7 @@ dependencies {
     implementation libs.rx2Kotlin
 
     implementation libs.glide
+    implementation libs.glideOkHttp3
     kapt libs.glideAnnotationsProcessor
 
     implementation libs.zoomage

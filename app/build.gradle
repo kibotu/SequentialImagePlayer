@@ -19,6 +19,7 @@ android {
     defaultConfig {
         applicationId "com.exozet.sequentialimage.app"
         minSdkVersion minSdkVer
+        multiDexEnabled true
         targetSdkVersion targetSdkVer
         versionCode isCi ? commitCount() : VERSION_CODE
         versionName isCi ? simpleReleaseVersionName() : VERSION_NAME
@@ -135,13 +136,24 @@ dependencies {
     implementation libs.kotlinJdk8
     implementation libs.supportMultidex
     implementation libs.supportAppCompat
+    implementation libs.appCompatResources
     implementation libs.supportDesign
-    implementation libs.constraintLayout
+    implementation libs.constraintLayout2
     implementation libs.supportVectorDrawable
+
+    implementation libs.rxpermissions
+    implementation libs.logger
+
+    implementation libs.rx2java
+    implementation libs.rx2Android
+    implementation libs.rx2Kotlin
 
     debugImplementation libs.leakcanaryDebug
     debugImplementation libs.leakcanaryDebugSupportFragments
     releaseImplementation libs.leakcanaryRelease
+
+    implementation libs.logger
+    implementation libs.rxpermissions
 
     implementation project(':SequentialImagePlayer')
 }

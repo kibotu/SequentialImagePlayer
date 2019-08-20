@@ -1,10 +1,12 @@
 package com.exozet.sequentialimage.app
 
+import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
@@ -13,25 +15,67 @@ import androidx.core.math.MathUtils.clamp
 import com.exozet.sequentialimageplayer.RemoveFishEye
 import com.exozet.sequentialimageplayer.SequentialImagePlayerActivity
 import com.exozet.sequentialimageplayer.parseAssetFile
+import com.tbruyelle.rxpermissions2.RxPermissions
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_main.*
+import net.kibotu.logger.LogcatLogger
+import net.kibotu.logger.Logger
+import net.kibotu.logger.Logger.logw
+import java.io.File
 import java.io.IOException
 import kotlin.concurrent.fixedRateTimer
 
 class MainActivity : AppCompatActivity() {
 
+    var subscription: CompositeDisposable = CompositeDisposable()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Logger.addLogger(LogcatLogger())
+
+        checkWriteExternalStoragePermission()
+    }
+
+    protected fun checkWriteExternalStoragePermission() {
+        RxPermissions(this)
+            .requestEachCombined(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            .subscribe({
+                if (it.granted)
+                    onWritePermissionGranted()
+            }, {
+                logw { "permission $it" }
+            })
+            .addTo(subscription)
+    }
+
+    private fun onWritePermissionGranted() {
+
+        val localTest = (1 until 360).map {
+
+            val uri =  Uri.fromFile(File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/postProcess/11113/1565785803706/image_%03d.jpg".format(it)))
+
+            Log.v(MainActivity::class.java.simpleName, "uri.path=${uri.path} exists=${File(uri.path).exists()}")
+
+            uri
+        }.toTypedArray()
+
         default_video.setOnClickListener {
-            startSequentialPlayer((1 until 317).map {
+
+            val list = (1 until 317).map {
                 parseAssetFile(
                     String.format(
                         "default/out%d.png",
                         it
                     )
                 )
-            }.toTypedArray())
+            }.toTypedArray()
+
+            startSequentialPlayer(list)
         }
         stabilized_video.setOnClickListener {
             startSequentialPlayer((1 until 192).map {
@@ -107,6 +151,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+
     private fun loadBitmap(uri: Uri?): Bitmap? {
 
         Log.v(this::class.java.simpleName, "loadingBitmap $uri")
@@ -140,5 +185,12 @@ class MainActivity : AppCompatActivity() {
             .swipeSpeed(0.75f) // default: 1
             .blurLetterbox() // default: true
             .startActivity()
+    }
+
+    override fun onDestroy() {
+        if (!subscription.isDisposed) {
+            subscription.dispose()
+        }
+        super.onDestroy()
     }
 }

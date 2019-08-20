@@ -102,7 +102,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         imageUris.forEach {
 
-            Glide.with(context)
+            GlideApp.with(context!!.applicationContext!!)
                 .applyDefaultRequestOptions(requestOptions)
                 .load(it)
                 .addListener(object : RequestListener<Drawable> {
@@ -141,6 +141,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
             loadImage(imageUris.first())
             fadeInSwipeView()
         }
+        numberProgressBar.invalidate()
+        invalidate()
     }
 
     @FloatRange(from = -1.0, to = 1.0)
@@ -166,7 +168,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
 
     var progress: Float = 0f
-        get () = currentItem / max.toFloat()
+        get() = currentItem / max.toFloat()
         set(value) {
             field = value
             onProgressChanged?.invoke(value)
@@ -228,7 +230,6 @@ class SequentialImagePlayer @JvmOverloads constructor(
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) onResume() else onPause()
     }
-
 
     /**
      * Converts dp to pixel.
