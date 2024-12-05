@@ -468,15 +468,12 @@ class SequentialImagePlayer @JvmOverloads constructor(
                 Bitmap.Config.RGB_565
             )
         }
-
-        val bitmap = blurryBitmap ?: return
-
-        val canvas = Canvas(bitmap)
+        val canvas = Canvas(blurryBitmap!!)
         canvas.translate(-left.toFloat() + -measuredWidth / 2f, -top.toFloat() / 2f)
 //        canvas.scale(1 / scaleFactor, 1 / scaleFactor)
         canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
-        blurryBitmap = FastBlur.doBlur(bitmap, radius, true)
+        blurryBitmap = FastBlur.doBlur(blurryBitmap!!, radius, true)
 
         setImageBitmap(blurryBitmap)
 
