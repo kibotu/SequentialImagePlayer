@@ -126,7 +126,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = "com.exozet"
-                artifactId = 'sequentialimageplayer'
+                artifactId = 'SequentialImagePlayer'
                 version = VERSION_NAME
             }
         }
