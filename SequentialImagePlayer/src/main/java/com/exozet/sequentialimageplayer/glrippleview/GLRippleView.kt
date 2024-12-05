@@ -133,7 +133,7 @@ class GLRippleView @JvmOverloads constructor(context: Context, attrs: AttributeS
             ViewAspectRatioMeasurer(bgImage!!.width / bgImage!!.height.toDouble())
 
         varm.measure(widthMeasureSpec, heightMeasureSpec)
-        setMeasuredDimension(varm.measuredWidth, varm.measuredHeight)
+        setMeasuredDimension(varm.measuredWidth ?: 0, varm.measuredHeight ?: 0)
     }
 
     private fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
