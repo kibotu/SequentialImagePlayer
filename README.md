@@ -6,6 +6,21 @@ Native Sequential Image Player. Supports different FPS, auto play, and scrubbing
 
 [![Screenshot](screenshot.png)](screenshot.png)
 
+<!-- TOC -->
+* [How to use](#how-to-use)
+  * [As view](#as-view)
+  * [As Standalone Activity](#as-standalone-activity)
+* [How to install](#how-to-install)
+* [Misc](#misc)
+  * [Stabilize video](#stabilize-video)
+  * [Merge 2 videos horizontally](#merge-2-videos-horizontally)
+  * [Extract frames from video](#extract-frames-from-video)
+  * [Resize images](#resize-images-)
+  * [Optimize pngs](#optimize-pngs)
+* [Changelog](#changelog)
+* [Contributors](#contributors)
+<!-- TOC -->
+
 # How to use
 
 ## As view
@@ -78,6 +93,8 @@ dependencies {
 }
 ```
 
+# Misc
+
 ## Stabilize video
 
 (Sauce: https://scottlinux.com/2016/09/17/video-stabilization-using-vidstab-and-ffmpeg-on-linux/)
@@ -142,6 +159,6 @@ pngquant app/src/main/assets/default/**.png --ext .png --force
 * Supports loading from external storage
 * Supports loading from file 
 
-## Contributors
+# Contributors
 
 [Jan Rabe](jan.rabe@kibotu.net)
