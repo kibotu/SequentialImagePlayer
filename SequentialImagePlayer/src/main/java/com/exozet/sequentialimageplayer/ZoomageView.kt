@@ -12,7 +12,7 @@ class ZoomageView @JvmOverloads constructor(
     internal var view: View? = null
 
     override fun onTouchEvent(event: MotionEvent?): Boolean = when {
-        event?.pointerCount ?: 0 <= 1 -> {
+        (event?.pointerCount ?: 0) <= 1 -> {
             view?.onTouchEvent(event)
             isTranslatable = false // disable translation while we have only one finger on screen
             super.onTouchEvent(event)

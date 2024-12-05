@@ -37,14 +37,13 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory
 import com.bumptech.glide.request.transition.Transition
+import com.exozet.sequentialimageplayer.databinding.SequentialimageplayerViewBinding
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.sequentialimageplayer_view.view.*
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -57,8 +56,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    @LayoutRes
-    val layout = R.layout.sequentialimageplayer_view
+    private lateinit var binding: SequentialimageplayerViewBinding
 
     private val TAG by lazy { "${this::class.java.simpleName}:$uuid" }
 
@@ -96,7 +94,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
     private fun preload() {
         preloadCounter = 0
 
-        numberProgressBar.max = imageUris.size
+        binding.numberProgressBar.max = imageUris.size
 
         busy()
 
@@ -109,7 +107,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
                     override fun onLoadFailed(
                         e: GlideException?,
                         model: Any?,
-                        target: Target<Drawable>?,
+                        target: Target<Drawable?>,
                         isFirstResource: Boolean
                     ): Boolean {
                         onProgressDownload()
@@ -118,10 +116,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
                     }
 
                     override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable?>?,
+                        dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
                         onProgressDownload()
@@ -135,13 +133,13 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private fun onProgressDownload() {
         ++preloadCounter
-        numberProgressBar.progress = preloadCounter
+        binding.numberProgressBar.progress = preloadCounter
         if (preloadCounter == imageUris.size) {
             cancelBusy()
             loadImage(imageUris.first())
             fadeInSwipeView()
         }
-        numberProgressBar.invalidate()
+        binding.numberProgressBar.invalidate()
         invalidate()
     }
 
@@ -149,10 +147,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var swipeSpeed: Float = 0.75f
 
     var autoPlay: Boolean = false
-        get() = autoplaySwitch.isChecked
+        get() = binding.autoplaySwitch.isChecked
         set(value) {
             field = value
-            autoplaySwitch.isChecked = value
+            binding.autoplaySwitch.isChecked = value
         }
 
     internal val max
@@ -161,10 +159,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var showControls: Boolean = false
         set(value) {
             field = value
-            seekBar.goneUnless(!value)
-            playDirectionSwitch.goneUnless(!value)
-            autoplaySwitch.goneUnless(!value)
-            fpsSpinner.goneUnless(!value)
+            binding.seekBar.goneUnless(!value)
+            binding.playDirectionSwitch.goneUnless(!value)
+            binding.autoplaySwitch.goneUnless(!value)
+            binding.fpsSpinner.goneUnless(!value)
         }
 
     var progress: Float = 0f
@@ -193,37 +191,37 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var zoomable: Boolean = true
         set(value) {
             field = value
-            viewHolder.isZoomable = value
+            binding.viewHolder.isZoomable = value
         }
 
     var translatable: Boolean = true
         set(value) {
             field = value
-            viewHolder.isTranslatable = value
+            binding.viewHolder.isTranslatable = value
         }
 
     var playBackwards: Boolean = true
         set(value) {
             field = value
-            playDirectionSwitch.isChecked = value
+            binding.playDirectionSwitch.isChecked = value
         }
 
     var blurLetterbox: Boolean = true
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.inflate(layout, this, true)
+        binding = SequentialimageplayerViewBinding.inflate(inflater, this, true)
 
         onCreate()
     }
 
     private fun onCreate() {
 
-        initSeekBar()
+        binding.initSeekBar()
 
-        autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
+        binding.autoplaySwitch.setOnCheckedChangeListener { _, isChecked -> if (isChecked) startAutoPlay() else stopAutoPlay() }
 
-        addSwipeGesture()
+        binding.addSwipeGesture()
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
@@ -241,18 +239,18 @@ class SequentialImagePlayer @JvmOverloads constructor(
             context!!.resources.displayMetrics
         )
 
-    private fun addSwipeGesture() {
+    private fun SequentialimageplayerViewBinding.addSwipeGesture() {
 
         var startScrollingSeekPosition = 0
 
-        swipe_detector.scrollListener.thresholdX = 3f.px
-        swipe_detector.scrollListener.thresholdY = 3f.px
+        swipeDetector.scrollListener.thresholdX = 3f.px
+        swipeDetector.scrollListener.thresholdY = 3f.px
 
         // connect swipe detector
-        viewHolder.view = swipe_detector
+        viewHolder.view = swipeDetector
 
         // toggle video playback based on scrolling state
-        swipe_detector?.onIsScrollingChanged {
+        swipeDetector?.onIsScrollingChanged {
             log("onIsScrollingChanged isScrolling=$it")
             if (it) {
                 if (swapIconView.visibility == View.VISIBLE) fadeOutSwipeView()
@@ -265,7 +263,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
             log("onIsScrollingChanged autoPlay=$autoPlay viewHolder.isZoomable=${viewHolder.isZoomable} viewHolder.isTranslatable=${viewHolder.isTranslatable} zoomable=$zoomable translatable=$translatable")
         }
 
-        swipe_detector?.onScroll { percentX, percentY ->
+        swipeDetector?.onScroll { percentX, percentY ->
             val maxPercent = swipeSpeed
             val scaledPercent = percentX * maxPercent
             val percentOfDuration = scaledPercent * -1 * max + startScrollingSeekPosition
@@ -275,7 +273,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
         }
     }
 
-    private fun initSeekBar() {
+    private fun SequentialimageplayerViewBinding.initSeekBar() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 swapImage(progress)
@@ -301,7 +299,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        viewHolder.scaleType = ImageView.ScaleType.FIT_CENTER
+        binding.viewHolder.scaleType = ImageView.ScaleType.FIT_CENTER
     }
 
     private var subscription = CompositeDisposable()
@@ -314,14 +312,14 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         currentItem = (index + max) % max
         loadImage(imageUris[currentItem])
-        seekBar.progress = currentItem
-        seekBar.max = max
+        binding.seekBar.progress = currentItem
+        binding.seekBar.max = max
 
         onProgressChanged?.invoke(progress)
     }
 
     fun nextImage() {
-        currentItem = if (!playDirectionSwitch.isChecked) currentItem + 1 else currentItem - 1
+        currentItem = if (!binding.playDirectionSwitch.isChecked) currentItem + 1 else currentItem - 1
         swapImage(currentItem)
     }
 
@@ -348,7 +346,9 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         disposable = intervalSubject.subscribe {
             nextImage()
-        }.addTo(subscription)
+        }.also {
+            subscription.add(it)
+        }
     }
 
     fun stopAutoPlay() {
@@ -375,20 +375,20 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private val bitmapImageViewTarget = object : SimpleTarget<Bitmap>() {
         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-            viewHolder.setImageBitmap(resource)
+            binding.viewHolder.setImageBitmap(resource)
             blurWith(resource)
         }
     }
 
     private fun blurWith(bitmap: Bitmap?) {
         if (resources.configuration.orientation == ORIENTATION_PORTRAIT) {
-            if (bitmap?.width ?: 0 >= bitmap?.height ?: 0)
-                viewHolderBackground.blur(bitmap)
+            if ((bitmap?.width ?: 0) >= (bitmap?.height ?: 0))
+                binding.viewHolderBackground.blur(bitmap)
         }
 
         if (resources.configuration.orientation == ORIENTATION_LANDSCAPE)
-            if (bitmap?.height ?: 0 >= bitmap?.width ?: 0)
-                viewHolderBackground.blur(bitmap)
+            if ((bitmap?.height ?: 0) >= (bitmap?.width ?: 0))
+                binding.viewHolderBackground.blur(bitmap)
     }
 
     private fun loadBitmap(uri: Uri?): Bitmap? {
@@ -409,11 +409,11 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     internal fun cancelBusy() {
-        numberProgressBar.visibility = View.GONE
+        binding.numberProgressBar.visibility = View.GONE
     }
 
     internal fun busy() {
-        numberProgressBar.visibility = View.VISIBLE
+        binding.numberProgressBar.visibility = View.VISIBLE
     }
 
     companion object {
@@ -480,15 +480,15 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private fun fadeInSwipeView() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionManager.beginDelayedTransition(swapIconView, Fade(Fade.OUT))
+            TransitionManager.beginDelayedTransition(binding.swapIconView, Fade(Fade.OUT))
         }
-        swapIconView.visibility = View.VISIBLE
+        binding.swapIconView.visibility = View.VISIBLE
     }
 
     private fun fadeOutSwipeView() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionManager.beginDelayedTransition(swapIconView, Fade(Fade.OUT))
+            TransitionManager.beginDelayedTransition(binding.swapIconView, Fade(Fade.OUT))
         }
-        swapIconView.visibility = View.GONE
+        binding.swapIconView.visibility = View.GONE
     }
 }

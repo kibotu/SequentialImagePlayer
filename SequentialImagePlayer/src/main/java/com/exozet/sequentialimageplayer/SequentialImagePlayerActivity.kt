@@ -16,16 +16,18 @@ import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.SHOW_CON
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.SWIPE_SPEED
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.TRANSLATABLE
 import com.exozet.sequentialimageplayer.SequentialImagePlayer.Companion.ZOOMABLE
-import kotlinx.android.synthetic.main.activity_sequentialimage_player.*
+import com.exozet.sequentialimageplayer.databinding.ActivitySequentialimagePlayerBinding
 import java.lang.ref.WeakReference
 
 
 class SequentialImagePlayerActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    private lateinit var binding: ActivitySequentialimagePlayerBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sequentialimage_player)
+        binding = ActivitySequentialimagePlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         intent?.extras?.let { arguments ->
 
@@ -35,7 +37,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 return
             }
 
-            with(sequentialImagePlayer) {
+            with(binding.sequentialImagePlayer) {
 
                 imageUris = files.map { it as Uri }.toTypedArray()
                 if (arguments.containsKey(FPS)) {
@@ -44,7 +46,7 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
                 if (arguments.containsKey(DURATION)) {
                     duration = arguments.getInt(DURATION)
                 }
-                playBackwards = arguments.getBoolean(PLAY_BACKWARDS) ?: false
+                playBackwards = arguments.getBoolean(PLAY_BACKWARDS) == true
                 autoPlay = arguments.getBoolean(AUTO_PLAY) ?: true
                 zoomable = arguments.getBoolean(ZOOMABLE) ?: true
                 translatable = arguments.getBoolean(TRANSLATABLE) ?: true

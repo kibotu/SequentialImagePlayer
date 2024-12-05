@@ -1,6 +1,5 @@
 package com.exozet.sequentialimage.app
 
-import android.Manifest
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -12,85 +11,83 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.math.MathUtils.clamp
+import com.exozet.sequentialimage.app.databinding.ActivityMainBinding
 import com.exozet.sequentialimageplayer.RemoveFishEye
 import com.exozet.sequentialimageplayer.SequentialImagePlayerActivity
 import com.exozet.sequentialimageplayer.parseAssetFile
-import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.activity_main.*
-import net.kibotu.logger.LogcatLogger
-import net.kibotu.logger.Logger
-import net.kibotu.logger.Logger.logw
 import java.io.File
 import java.io.IOException
 import kotlin.concurrent.fixedRateTimer
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var binding: ActivityMainBinding
+
     var subscription: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        Logger.addLogger(LogcatLogger())
-
-        checkWriteExternalStoragePermission()
+        startSequentialStabilizedDemo()
     }
 
-    protected fun checkWriteExternalStoragePermission() {
-        RxPermissions(this)
-            .requestEachCombined(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+    fun startSequentialStabilizedDemo() {
+        startSequentialPlayer((1 until 192).map {
+            parseAssetFile(
+                String.format(
+                    "stabilized/out%03d.png",
+                    it
+                )
             )
-            .subscribe({
-                if (it.granted)
-                    onWritePermissionGranted()
-            }, {
-                logw { "permission $it" }
-            })
-            .addTo(subscription)
+        }.toTypedArray())
     }
 
-    private fun onWritePermissionGranted() {
+    fun startSequentialDemo() {
+        val list = (1 until 317).map {
+            parseAssetFile(
+                String.format(
+                    "default/out%d.png",
+                    it
+                )
+            )
+        }.toTypedArray()
 
-        val localTest = (1 until 360).map {
+        startSequentialPlayer(list)
+    }
 
-            val uri =  Uri.fromFile(File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/postProcess/11113/1565785803706/image_%03d.jpg".format(it)))
+    private fun ActivityMainBinding.onWritePermissionGranted() {
 
-            Log.v(MainActivity::class.java.simpleName, "uri.path=${uri.path} exists=${File(uri.path).exists()}")
+        (1 until 360).map {
+
+            val uri = Uri.fromFile(
+                File(
+                    "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)}/postProcess/11113/1565785803706/image_%03d.jpg".format(
+                        it
+                    )
+                )
+            )
+
+            Log.v(
+                MainActivity::class.java.simpleName,
+                "uri.path=${uri.path} exists=${File(uri.path.orEmpty()).exists()}"
+            )
 
             uri
         }.toTypedArray()
 
-        default_video.setOnClickListener {
-
-            val list = (1 until 317).map {
-                parseAssetFile(
-                    String.format(
-                        "default/out%d.png",
-                        it
-                    )
-                )
-            }.toTypedArray()
-
-            startSequentialPlayer(list)
+        defaultVideo.setOnClickListener {
+           startSequentialDemo()
         }
-        stabilized_video.setOnClickListener {
-            startSequentialPlayer((1 until 192).map {
-                parseAssetFile(
-                    String.format(
-                        "stabilized/out%03d.png",
-                        it
-                    )
-                )
-            }.toTypedArray())
+        stabilizedVideo.setOnClickListener {
+            startSequentialStabilizedDemo()
         }
 
         val bitmap = ((image.drawable) as BitmapDrawable).bitmap
 
-        fish_eye.setOnClickListener {
+        fishEye.setOnClickListener {
             defished.setImageBitmap(RemoveFishEye(bitmap, 3.5))
             defished.visibility = View.VISIBLE
         }
@@ -108,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         glview.addBackgroundImages(listOf(loadBitmap(vids[0])!!))
 
         glview.setStrength(1.5f)
-        fish_eye_gl.setOnClickListener {
+        fishEyeGl.setOnClickListener {
 
             fixedRateTimer(
                 "bla",
@@ -116,7 +113,15 @@ class MainActivity : AppCompatActivity() {
                 0.toLong(),
                 period = (1000.toFloat() / 30.toFloat()).toLong(),
                 action = {
-                    glview.setBackground(loadBitmap(vids[clamp((++index) % vids.size - 1, 0, vids.size - 1)])!!)
+                    glview.setBackground(
+                        loadBitmap(
+                            vids[clamp(
+                                (++index) % vids.size - 1,
+                                0,
+                                vids.size - 1
+                            )]
+                        )!!
+                    )
                 }
             )
             glview.visibility = View.VISIBLE

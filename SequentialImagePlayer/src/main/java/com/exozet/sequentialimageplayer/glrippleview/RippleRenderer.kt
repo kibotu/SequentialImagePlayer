@@ -99,7 +99,7 @@ internal class RippleRenderer(private val context: Context,
                 GLES20.glUseProgram(renderInfo.programId)
                 logGlError(gl, "glUseProgram ${renderInfo.programId}")
             } catch (e: IOException) {
-                Log.e(this.javaClass.name, e.message)
+                Log.e(this.javaClass.name, e.message.orEmpty())
             }
 
             loadTexture(renderInfo.bgImage)
