@@ -9,7 +9,7 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
 # How to use
 
 ## As view
-
+```xml
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
@@ -25,8 +25,9 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
             app:layout_constraintTop_toTopOf="parent" />
         
     </androidx.constraintlayout.widget.ConstraintLayout>
+```
 
-        
+```kotlin
     private fun startSequentialPlayer(list: List<Uri>) = with(sequentialImagePlayer) {
         imageUris = list.toTypedArray()
         autoPlay = true
@@ -38,11 +39,13 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
         swipeSpeed = 0.7f
         blurLetterbox = true
     }
+```
 
 ## As Standalone Activity    
 
 Start 360 Degree Activity by passing bitmap file path for or an  bitmap
 
+```kotlin
     (1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
 
     SequentialImagePlayerActivity.Builder
@@ -57,7 +60,8 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
                   .swipeSpeed(0.8f) // default: 1
                   .blurLetterbox() // default: true
                   .startActivity()
-     
+```
+
 # How to install
 
 Atm only as module
@@ -80,26 +84,36 @@ Atm only as module
 
 (Sauce: https://scottlinux.com/2016/09/17/video-stabilization-using-vidstab-and-ffmpeg-on-linux/)
 
+```sh
     ffmpeg -i example_walkaround.mov -vf vidstabdetect=shakiness=10:accuracy=15 -f null -
     ffmpeg -i example_walkaround.mov -vf vidstabtransform=smoothing=30:input="transforms.trf" example_walkaround_stabilized.mp4
-    
+```
+
 ## Merge 2 videos horizontally
 
+```sh
     ffmpeg -i example_walkaround.mov -i example_walkaround_stabilized.mp4 -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" merged.mp4
-    
+```
+
 ## Extract frames from video
 
+```sh
     # 3 frames per second
     ffmpeg -i example_walkaround_stabilized.mp4 -r 3/1 app/src/main/assets/out%03d.png
+```
 
 ## Resize images 
 
+```sh
     mogrify -resize 1024x app/src/main/assets/default/*
-    
+```
+
 ## Optimize pngs
 
+```sh
     pngquant app/src/main/assets/default/**.png --ext .png --force
-    
+```
+
 # Changelog
 
 * Supports onProgressChanged events, e.g.: onProgressChanged = { degreeIndicator.rotation = it * 360 }
@@ -122,4 +136,4 @@ Atm only as module
 
 ## Contributors
 
-[Jan Rabe](jan.rabe@exozet.com)
+[Jan Rabe](jan.rabe@kibotu.net)
