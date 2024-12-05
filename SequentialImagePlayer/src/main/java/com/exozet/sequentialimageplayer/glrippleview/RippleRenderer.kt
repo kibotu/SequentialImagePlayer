@@ -24,18 +24,20 @@ import javax.microedition.khronos.opengles.GL10
 /**
  * Created by Ryota Niinomi on 2017/05/24.
  */
-internal class RippleRenderer(private val context: Context,
-                              private var bgImages: MutableList<Bitmap>) : GLSurfaceView.Renderer {
+internal class RippleRenderer(
+    private val context: Context,
+    private var bgImages: MutableList<Bitmap>
+) : GLSurfaceView.Renderer {
 
     companion object {
         private val NS_PER_SECOND = TimeUnit.SECONDS.toNanos(1).toFloat()
         private const val NO_TEXTURE = -1
 
         private val VERTICES: FloatArray = floatArrayOf(
-                -1.0f, 1.0f, 0.0f, 1.0f,  // ↖ left top︎
-                -1.0f, -1.0f, 0.0f, 1.0f, // ↙︎ left bottom
-                1.0f, 1.0f, 0.0f, 1.0f,   // ↗︎ right top
-                1.0f, -1.0f, 0.0f, 1.0f   // ↘︎ right bottom
+            -1.0f, 1.0f, 0.0f, 1.0f,  // ↖ left top︎
+            -1.0f, -1.0f, 0.0f, 1.0f, // ↙︎ left bottom
+            1.0f, 1.0f, 0.0f, 1.0f,   // ↗︎ right top
+            1.0f, -1.0f, 0.0f, 1.0f   // ↘︎ right bottom
         )
     }
 
@@ -81,14 +83,20 @@ internal class RippleRenderer(private val context: Context,
                 logGlError(gl, "glCreateProgram ${renderInfo.programId}")
 
                 GLES20.glCreateShader(GLES20.GL_VERTEX_SHADER).let { vertexShader ->
-                    GLES20.glShaderSource(vertexShader, loadRawResource(context, R.raw.ripple_vertex))
+                    GLES20.glShaderSource(
+                        vertexShader,
+                        loadRawResource(context, R.raw.ripple_vertex)
+                    )
                     GLES20.glCompileShader(vertexShader)
                     GLES20.glAttachShader(renderInfo.programId, vertexShader)
                     logGlError(gl, "glAttachShader vertexShader ${renderInfo.programId}")
                 }
 
                 GLES20.glCreateShader(GLES20.GL_FRAGMENT_SHADER).let { fragmentShader ->
-                    GLES20.glShaderSource(fragmentShader, loadRawResource(context, R.raw.defish_fragment))
+                    GLES20.glShaderSource(
+                        fragmentShader,
+                        loadRawResource(context, R.raw.defish_fragment)
+                    )
                     GLES20.glCompileShader(fragmentShader)
                     GLES20.glAttachShader(renderInfo.programId, fragmentShader)
                     logGlError(gl, "glAttachShader fragmentShader ${renderInfo.programId}")
@@ -137,7 +145,14 @@ internal class RippleRenderer(private val context: Context,
             // position
             val position: Int = GLES20.glGetAttribLocation(renderInfo.programId, "position")
             GLES20.glEnableVertexAttribArray(position)
-            GLES20.glVertexAttribPointer(position, 4, GLES20.GL_FLOAT, false, 0, renderInfo.vertexBuffer)
+            GLES20.glVertexAttribPointer(
+                position,
+                4,
+                GLES20.GL_FLOAT,
+                false,
+                0,
+                renderInfo.vertexBuffer
+            )
             logGlError(gl, "Set Position")
 
             logGlError(gl, "glEnable GL_TEXTURE_2D")
@@ -145,7 +160,14 @@ internal class RippleRenderer(private val context: Context,
             // texCoord
             val texCoord: Int = GLES20.glGetAttribLocation(renderInfo.programId, "texcoord")
             GLES20.glEnableVertexAttribArray(texCoord)
-            GLES20.glVertexAttribPointer(texCoord, 2, GLES20.GL_FLOAT, false, 0, renderInfo.texcoordBuffer)
+            GLES20.glVertexAttribPointer(
+                texCoord,
+                2,
+                GLES20.GL_FLOAT,
+                false,
+                0,
+                renderInfo.texcoordBuffer
+            )
             logGlError(gl, "Set texCoord")
 
             // texture
@@ -156,7 +178,11 @@ internal class RippleRenderer(private val context: Context,
 
             // resolution
             GLES20.glGetUniformLocation(renderInfo.programId, "textureSize").run {
-                GLES20.glUniform2f(this, bgImages.first().width.toFloat(), bgImages.first().height.toFloat())
+                GLES20.glUniform2f(
+                    this,
+                    bgImages.first().width.toFloat(),
+                    bgImages.first().height.toFloat()
+                )
             }
             logGlError(gl, "Set textureSize")
 
@@ -222,7 +248,10 @@ internal class RippleRenderer(private val context: Context,
      */
     fun startCrossFadeAnimation() {
         if (renderInfoList.size < 2) {
-            Log.i(javaClass.name, "Can not start cross-fade animation since renderInfoList size is under 2.")
+            Log.i(
+                javaClass.name,
+                "Can not start cross-fade animation since renderInfoList size is under 2."
+            )
             return
         }
 
@@ -251,7 +280,11 @@ internal class RippleRenderer(private val context: Context,
         }, fadeInterval)
     }
 
-    private fun loadTexture(img: Bitmap?, usedTexId: Int = currentTextureId, recycle: Boolean = false): Int {
+    private fun loadTexture(
+        img: Bitmap?,
+        usedTexId: Int = currentTextureId,
+        recycle: Boolean = false
+    ): Int {
         if (img == null)
             return NO_TEXTURE
 
@@ -260,10 +293,26 @@ internal class RippleRenderer(private val context: Context,
             GLES20.glEnable(GLES20.GL_TEXTURE_2D)
             GLES20.glGenTextures(1, textures, 0)
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textures[0])
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR.toFloat())
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR.toFloat())
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE.toFloat())
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE.toFloat())
+            GLES20.glTexParameterf(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MAG_FILTER,
+                GLES20.GL_LINEAR.toFloat()
+            )
+            GLES20.glTexParameterf(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MIN_FILTER,
+                GLES20.GL_LINEAR.toFloat()
+            )
+            GLES20.glTexParameterf(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_WRAP_S,
+                GLES20.GL_CLAMP_TO_EDGE.toFloat()
+            )
+            GLES20.glTexParameterf(
+                GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_WRAP_T,
+                GLES20.GL_CLAMP_TO_EDGE.toFloat()
+            )
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, img, 0)
         } else {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, usedTexId)
@@ -322,7 +371,7 @@ internal class RippleRenderer(private val context: Context,
                     NO_TEXTURE,
                     bgImage,
                     if (index == 0) 1f else 0f
-            )
+                )
             )
         }
     }
@@ -346,10 +395,10 @@ internal class RippleRenderer(private val context: Context,
 
             // Scale image with keep ratio.
             val texCoords: FloatArray = floatArrayOf(
-                    0.0f + rX, 0.0f + rY, // ↖ left top︎
-                    0.0f + rX, 1.0f - rY, // ↙︎ left bottom
-                    1.0f - rX, 0.0f + rY, // ↗︎ right top
-                    1.0f - rX, 1.0f - rY  // ↘︎ right bottom
+                0.0f + rX, 0.0f + rY, // ↖ left top︎
+                0.0f + rX, 1.0f - rY, // ↙︎ left bottom
+                1.0f - rX, 0.0f + rY, // ↗︎ right top
+                1.0f - rX, 1.0f - rY  // ↘︎ right bottom
             )
             info.texcoordBuffer = BufferUtil.convert(texCoords)
         }
@@ -370,7 +419,12 @@ internal class RippleRenderer(private val context: Context,
             return
         val glError = gl.glGetError()
         if (glError != GL10.GL_NO_ERROR) {
-            Log.e(this::class.java.simpleName, "GL ERROR: $text - ${GLU.gluErrorString(glError)} ${GLUtils.getEGLErrorString(glError)}")
+            Log.e(
+                this::class.java.simpleName,
+                "GL ERROR: $text - ${GLU.gluErrorString(glError)} ${
+                    GLUtils.getEGLErrorString(glError)
+                }"
+            )
         }
     }
 }

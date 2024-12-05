@@ -23,9 +23,10 @@ internal open class SwipeDistanceView @JvmOverloads constructor(
     var isScrolling = false
 
     init {
-        scrollListener = ScrollListener({ measuredWidth }, { measuredHeight }) { percentX, percentY ->
-            onScroll?.invoke(percentX, percentY)
-        }
+        scrollListener =
+            ScrollListener({ measuredWidth }, { measuredHeight }) { percentX, percentY ->
+                onScroll?.invoke(percentX, percentY)
+            }
         gestureDetector = GestureDetector(context, scrollListener)
     }
 
@@ -52,10 +53,12 @@ internal open class SwipeDistanceView @JvmOverloads constructor(
             event?.actionMasked == MotionEvent.ACTION_DOWN && event.pointerCount <= 1 -> {
                 gestureDetector.onTouchEvent(event)
             }
+
             event?.actionMasked == MotionEvent.ACTION_MOVE && event.pointerCount <= 1 -> {
                 startScrolling()
                 gestureDetector.onTouchEvent(event)
             }
+
             else -> {
                 stopScrolling()
                 super.onTouchEvent(event)

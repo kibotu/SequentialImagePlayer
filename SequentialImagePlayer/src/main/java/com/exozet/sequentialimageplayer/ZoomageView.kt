@@ -17,6 +17,7 @@ class ZoomageView @JvmOverloads constructor(
             isTranslatable = false // disable translation while we have only one finger on screen
             super.onTouchEvent(event)
         }
+
         else -> {
             isTranslatable = true
             super.onTouchEvent(event)

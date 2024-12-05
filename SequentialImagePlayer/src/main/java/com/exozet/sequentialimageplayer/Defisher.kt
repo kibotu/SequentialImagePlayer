@@ -13,7 +13,8 @@ fun RemoveFishEye(bitmap: Bitmap, strength: Double): Bitmap {
     val start = System.currentTimeMillis()
 
     val conf = Bitmap.Config.ARGB_8888 // see other conf types
-    val correctedImage = Bitmap.createBitmap(bitmap.width, bitmap.height, conf) // this creates a MUTABLE bitmap
+    val correctedImage =
+        Bitmap.createBitmap(bitmap.width, bitmap.height, conf) // this creates a MUTABLE bitmap
 
     //The center points of the image
     val xc = bitmap.width / 2.0
@@ -23,7 +24,8 @@ fun RemoveFishEye(bitmap: Bitmap, strength: Double): Bitmap {
     if (strength == 0.0)
         s = 0.00001
 
-    val correctionRadius = Math.sqrt((correctedImage.width * correctedImage.width + correctedImage.height * correctedImage.height).toDouble()) / s
+    val correctionRadius =
+        Math.sqrt((correctedImage.width * correctedImage.width + correctedImage.height * correctedImage.height).toDouble()) / s
 
     var theta: Double
     val zoom = 1.0
@@ -49,7 +51,8 @@ fun RemoveFishEye(bitmap: Bitmap, strength: Double): Bitmap {
             val sourceY = yc + theta * newY * zoom
 
             val xd = Math.max(0.0, Math.min(sourceX, (correctedImage.width - 1).toDouble())).toInt()
-            val yd = Math.max(0.0, Math.min(sourceY, (correctedImage.height - 1).toDouble())).toInt()
+            val yd =
+                Math.max(0.0, Math.min(sourceY, (correctedImage.height - 1).toDouble())).toInt()
             dst.setPixel(x, y, src.getPixel(xd, yd))
         }
     }

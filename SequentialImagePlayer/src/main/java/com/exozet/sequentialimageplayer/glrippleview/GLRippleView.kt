@@ -12,7 +12,8 @@ import com.exozet.sequentialimageplayer.R
 /**
  * Created by Ryota Niinomi on 2017/05/24.
  */
-class GLRippleView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : GLSurfaceView(context, attrs) {
+class GLRippleView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    GLSurfaceView(context, attrs) {
 
     companion object {
         val OPENGL_ES_VERSION = 2

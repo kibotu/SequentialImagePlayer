@@ -4,17 +4,21 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import kotlin.math.abs
 
-internal open class ScrollListener(val width: () -> Int, val height: () -> Int, val onScroll: (percentX: Float, percentY: Float) -> Unit) : GestureDetector.SimpleOnGestureListener() {
+internal open class ScrollListener(
+    val width: () -> Int,
+    val height: () -> Int,
+    val onScroll: (percentX: Float, percentY: Float) -> Unit
+) : GestureDetector.SimpleOnGestureListener() {
 
     /**
      * Min Swipe X-Distance
      */
-    var thresholdX  = 3f
+    var thresholdX = 3f
 
     /**
      * Min Swipe Y-Distance
      */
-    var thresholdY  = 3f
+    var thresholdY = 3f
 
     /**
      * Starting X-Position
@@ -32,7 +36,12 @@ internal open class ScrollListener(val width: () -> Int, val height: () -> Int, 
         return true
     }
 
-    override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean {
+    override fun onScroll(
+        e1: MotionEvent?,
+        e2: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean {
 
         val dX = startX - e2.x
         val dY = startY - e2.y

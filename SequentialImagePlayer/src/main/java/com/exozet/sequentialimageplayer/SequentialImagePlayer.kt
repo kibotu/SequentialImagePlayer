@@ -22,7 +22,6 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
-import androidx.annotation.LayoutRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -319,7 +318,8 @@ class SequentialImagePlayer @JvmOverloads constructor(
     }
 
     fun nextImage() {
-        currentItem = if (!binding.playDirectionSwitch.isChecked) currentItem + 1 else currentItem - 1
+        currentItem =
+            if (!binding.playDirectionSwitch.isChecked) currentItem + 1 else currentItem - 1
         swapImage(currentItem)
     }
 
@@ -371,7 +371,9 @@ class SequentialImagePlayer @JvmOverloads constructor(
             .into(bitmapImageViewTarget)
     }
 
-    private val crossFadeFactory by lazy { DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build() }
+    private val crossFadeFactory by lazy {
+        DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build()
+    }
 
     private val bitmapImageViewTarget = object : SimpleTarget<Bitmap>() {
         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -459,19 +461,22 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
         val startMs = System.currentTimeMillis()
 
-        if (blurryBitmap == null)
+        if (blurryBitmap == null) {
             blurryBitmap = Bitmap.createBitmap(
                 (width / scaleFactor).toInt(),
                 (height / scaleFactor).toInt(),
                 Bitmap.Config.RGB_565
             )
+        }
 
-        val canvas = Canvas(blurryBitmap!!)
+        val bitmap = blurryBitmap ?: return
+
+        val canvas = Canvas(bitmap)
         canvas.translate(-left.toFloat() + -measuredWidth / 2f, -top.toFloat() / 2f)
 //        canvas.scale(1 / scaleFactor, 1 / scaleFactor)
         canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
-        blurryBitmap = FastBlur.doBlur(blurryBitmap, radius, true)
+        blurryBitmap = FastBlur.doBlur(bitmap, radius, true)
 
         setImageBitmap(blurryBitmap)
 

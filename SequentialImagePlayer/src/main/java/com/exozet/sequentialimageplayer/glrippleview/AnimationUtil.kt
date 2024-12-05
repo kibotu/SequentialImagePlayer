@@ -8,7 +8,13 @@ object AnimationUtil {
     /**
      * Translate the range to another range
      */
-    fun map(value: Float, beforeMin: Float, beforeMax: Float, afterMin: Float, afterMax: Float): Float {
+    fun map(
+        value: Float,
+        beforeMin: Float,
+        beforeMax: Float,
+        afterMin: Float,
+        afterMax: Float
+    ): Float {
         var result = lerp(afterMin, afterMax, normalize(value, beforeMin, beforeMax))
         if (afterMin < afterMax) {
             if (result > afterMax) {

@@ -138,22 +138,24 @@ class SequentialImagePlayerActivity : AppCompatActivity() {
         }
 
         fun startActivity() =
-            context.get()!!.startActivity(Intent(context.get(), SequentialImagePlayerActivity::class.java)
-                .apply {
-                    putExtra(Uri::class.java.canonicalName, uris)
-                    fps?.let { putExtra(FPS, it) }
-                    duration?.let { putExtra(DURATION, it) }
-                    putExtra(ZOOMABLE, zoomable)
-                    putExtra(TRANSLATABLE, translatable)
-                    putExtra(PLAY_BACKWARDS, playBackwards)
-                    putExtra(AUTO_PLAY, autoPlay)
-                    putExtra(SHOW_CONTROLS, showControls)
-                    putExtra(SWIPE_SPEED, swipeSpeed)
-                    putExtra(BLUR_LETTERBOX, blurLetterbox)
-                })
+            context.get()!!
+                .startActivity(Intent(context.get(), SequentialImagePlayerActivity::class.java)
+                    .apply {
+                        putExtra(Uri::class.java.canonicalName, uris)
+                        fps?.let { putExtra(FPS, it) }
+                        duration?.let { putExtra(DURATION, it) }
+                        putExtra(ZOOMABLE, zoomable)
+                        putExtra(TRANSLATABLE, translatable)
+                        putExtra(PLAY_BACKWARDS, playBackwards)
+                        putExtra(AUTO_PLAY, autoPlay)
+                        putExtra(SHOW_CONTROLS, showControls)
+                        putExtra(SWIPE_SPEED, swipeSpeed)
+                        putExtra(BLUR_LETTERBOX, blurLetterbox)
+                    })
 
         companion object {
-            fun with(context: Context): Builder = Builder().also { it.context = WeakReference(context) }
+            fun with(context: Context): Builder =
+                Builder().also { it.context = WeakReference(context) }
         }
     }
 }

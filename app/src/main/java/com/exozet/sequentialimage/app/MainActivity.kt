@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }.toTypedArray()
 
         defaultVideo.setOnClickListener {
-           startSequentialDemo()
+            startSequentialDemo()
         }
         stabilizedVideo.setOnClickListener {
             startSequentialStabilizedDemo()
