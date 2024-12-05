@@ -119,7 +119,7 @@ internal class RippleRenderer(private val context: Context,
     override fun onDrawFrame(gl: GL10?) {
 
         while (actions.isNotEmpty())
-            actions.poll().run()
+            actions.poll()?.run()
 
         if (currentTextureId == NO_TEXTURE)
             return
