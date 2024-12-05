@@ -49,22 +49,20 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
 (1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
 
 SequentialImagePlayerActivity.Builder
-              .with(this)
-              .uris(list)
-              .fps(24) // default: 30
-              .playBackwards(false) // default: false
-              .autoPlay(false) // default: true
-              .zoomable(true) // default: true
-              .translatable(true) // default: true
-              .showControls(true) // default: false
-              .swipeSpeed(0.8f) // default: 1
-              .blurLetterbox() // default: true
-              .startActivity()
+    .with(this)
+    .uris(list)
+    .fps(24) // default: 30
+    .playBackwards(false) // default: false
+    .autoPlay(false) // default: true
+    .zoomable(true) // default: true
+    .translatable(true) // default: true
+    .showControls(true) // default: false
+    .swipeSpeed(0.8f) // default: 1
+    .blurLetterbox() // default: true
+    .startActivity()
 ```
 
 # How to install
-
-Atm only as module
 
 ```groovy
 dependencyResolutionManagement {
