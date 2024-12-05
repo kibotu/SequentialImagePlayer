@@ -1,4 +1,4 @@
-# SequentialImagePlayer [![API](https://img.shields.io/badge/API-15%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=15) [![Gradle Version](https://img.shields.io/badge/gradle-5.4.1-green.svg)](https://docs.gradle.org/current/release-notes)  [![Kotlin](https://img.shields.io/badge/kotlin-1.3.30-green.svg)](https://kotlinlang.org/) [ ![Download](https://api.bintray.com/packages/exozetag/maven/Sequential-Image-Player/images/download.svg) ](https://bintray.com/exozetag/maven/Sequential-Image-Player/_latestVersion)
+# SequentialImagePlayer [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21) [![Gradle Version](https://img.shields.io/badge/gradle-8.11.1-green.svg)](https://docs.gradle.org/current/release-notes)  [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-green.svg)](https://kotlinlang.org/) [![](https://jitpack.io/v/kibotu/mobile-sequential-image-player.svg)](https://jitpack.io/#kibotu/mobile-sequential-image-player)
 
 Native Sequential Image Player. Supports different fps, auto play and scrubbing for-/ and backwards.
 
@@ -58,13 +58,23 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
                   .blurLetterbox() // default: true
                   .startActivity()
      
-# How to install (tbd)
+# How to install
 
 Atm only as module
-    
-    dependencies {
-        api project(':SequentialImagePlayer')
+
+```groovy
+    dependencyResolutionManagement {
+        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+        repositories {
+            mavenCentral()
+            maven { url 'https://jitpack.io' }
+        }
     }
+
+    dependencies {
+        implementation 'com.github.kibotu:mobile-sequential-image-player:-SNAPSHOT'
+    }
+```
 
 ## Stabilize video
 
