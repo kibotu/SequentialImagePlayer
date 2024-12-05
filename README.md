@@ -10,35 +10,35 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
 
 ## As view
 ```xml
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.exozet.sequentialimageplayer.SequentialImagePlayer
+        android:id="@+id/sequentialImagePlayer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     
-        <com.exozet.sequentialimageplayer.SequentialImagePlayer
-            android:id="@+id/sequentialImagePlayer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
 ```kotlin
-    private fun startSequentialPlayer(list: List<Uri>) = with(sequentialImagePlayer) {
-        imageUris = list.toTypedArray()
-        autoPlay = true
-        fps = 30
-        playBackwards = false
-        zoomable = true
-        translatable = true
-        showControls = false
-        swipeSpeed = 0.7f
-        blurLetterbox = true
-    }
+private fun startSequentialPlayer(list: List<Uri>) = with(sequentialImagePlayer) {
+    imageUris = list.toTypedArray()
+    autoPlay = true
+    fps = 30
+    playBackwards = false
+    zoomable = true
+    translatable = true
+    showControls = false
+    swipeSpeed = 0.7f
+    blurLetterbox = true
+}
 ```
 
 ## As Standalone Activity    
@@ -46,20 +46,20 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
 Start 360 Degree Activity by passing bitmap file path for or an  bitmap
 
 ```kotlin
-    (1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
+(1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
 
-    SequentialImagePlayerActivity.Builder
-                  .with(this)
-                  .uris(list)
-                  .fps(24) // default: 30
-                  .playBackwards(false) // default: false
-                  .autoPlay(false) // default: true
-                  .zoomable(true) // default: true
-                  .translatable(true) // default: true
-                  .showControls(true) // default: false
-                  .swipeSpeed(0.8f) // default: 1
-                  .blurLetterbox() // default: true
-                  .startActivity()
+SequentialImagePlayerActivity.Builder
+              .with(this)
+              .uris(list)
+              .fps(24) // default: 30
+              .playBackwards(false) // default: false
+              .autoPlay(false) // default: true
+              .zoomable(true) // default: true
+              .translatable(true) // default: true
+              .showControls(true) // default: false
+              .swipeSpeed(0.8f) // default: 1
+              .blurLetterbox() // default: true
+              .startActivity()
 ```
 
 # How to install
@@ -67,17 +67,17 @@ Start 360 Degree Activity by passing bitmap file path for or an  bitmap
 Atm only as module
 
 ```groovy
-    dependencyResolutionManagement {
-        repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-        repositories {
-            mavenCentral()
-            maven { url 'https://jitpack.io' }
-        }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
+}
 
-    dependencies {
-        implementation 'com.github.kibotu:mobile-sequential-image-player:-SNAPSHOT'
-    }
+dependencies {
+    implementation 'com.github.kibotu:mobile-sequential-image-player:-SNAPSHOT'
+}
 ```
 
 ## Stabilize video
@@ -85,33 +85,33 @@ Atm only as module
 (Sauce: https://scottlinux.com/2016/09/17/video-stabilization-using-vidstab-and-ffmpeg-on-linux/)
 
 ```sh
-    ffmpeg -i example_walkaround.mov -vf vidstabdetect=shakiness=10:accuracy=15 -f null -
-    ffmpeg -i example_walkaround.mov -vf vidstabtransform=smoothing=30:input="transforms.trf" example_walkaround_stabilized.mp4
+ffmpeg -i example_walkaround.mov -vf vidstabdetect=shakiness=10:accuracy=15 -f null -
+ffmpeg -i example_walkaround.mov -vf vidstabtransform=smoothing=30:input="transforms.trf" example_walkaround_stabilized.mp4
 ```
 
 ## Merge 2 videos horizontally
 
 ```sh
-    ffmpeg -i example_walkaround.mov -i example_walkaround_stabilized.mp4 -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" merged.mp4
+ffmpeg -i example_walkaround.mov -i example_walkaround_stabilized.mp4 -filter_complex "[0:v:0]pad=iw*2:ih[bg]; [bg][1:v:0]overlay=w" merged.mp4
 ```
 
 ## Extract frames from video
 
 ```sh
-    # 3 frames per second
-    ffmpeg -i example_walkaround_stabilized.mp4 -r 3/1 app/src/main/assets/out%03d.png
+# 3 frames per second
+ffmpeg -i example_walkaround_stabilized.mp4 -r 3/1 app/src/main/assets/out%03d.png
 ```
 
 ## Resize images 
 
 ```sh
-    mogrify -resize 1024x app/src/main/assets/default/*
+mogrify -resize 1024x app/src/main/assets/default/*
 ```
 
 ## Optimize pngs
 
 ```sh
-    pngquant app/src/main/assets/default/**.png --ext .png --force
+pngquant app/src/main/assets/default/**.png --ext .png --force
 ```
 
 # Changelog
