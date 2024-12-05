@@ -93,7 +93,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
     private fun preload() {
         preloadCounter = 0
 
-        binding.numberProgressBar.max = imageUris.size
+        binding.numberProgressBar.setMax(imageUris.size)
 
         busy()
 
@@ -132,7 +132,7 @@ class SequentialImagePlayer @JvmOverloads constructor(
 
     private fun onProgressDownload() {
         ++preloadCounter
-        binding.numberProgressBar.progress = preloadCounter
+        binding.numberProgressBar.setProgress(preloadCounter)
         if (preloadCounter == imageUris.size) {
             cancelBusy()
             loadImage(imageUris.first())
@@ -190,13 +190,13 @@ class SequentialImagePlayer @JvmOverloads constructor(
     var zoomable: Boolean = true
         set(value) {
             field = value
-            binding.viewHolder.isZoomable = value
+            binding.viewHolder.setZoomable(value)
         }
 
     var translatable: Boolean = true
         set(value) {
             field = value
-            binding.viewHolder.isTranslatable = value
+            binding.viewHolder.setTranslatable(value)
         }
 
     var playBackwards: Boolean = true
@@ -259,10 +259,10 @@ class SequentialImagePlayer @JvmOverloads constructor(
                 if (autoPlay) startAutoPlay()
             }
 
-            log("onIsScrollingChanged autoPlay=$autoPlay viewHolder.isZoomable=${viewHolder.isZoomable} viewHolder.isTranslatable=${viewHolder.isTranslatable} zoomable=$zoomable translatable=$translatable")
+            log("onIsScrollingChanged autoPlay=$autoPlay viewHolder.isZoomable=${viewHolder.isZoomable()} viewHolder.isTranslatable=${viewHolder.isTranslatable()} zoomable=$zoomable translatable=$translatable")
         }
 
-        swipeDetector?.onScroll { percentX, percentY ->
+        swipeDetector.onScroll { percentX, percentY ->
             val maxPercent = swipeSpeed
             val scaledPercent = percentX * maxPercent
             val percentOfDuration = scaledPercent * -1 * max + startScrollingSeekPosition
