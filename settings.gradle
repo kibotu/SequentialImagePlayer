@@ -1,1 +1,2 @@
-include ':app', ':SequentialImagePlayer'
+include ':app'
+include ':SequentialImagePlayer'
