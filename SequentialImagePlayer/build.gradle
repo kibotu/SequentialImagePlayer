@@ -1,41 +1,26 @@
 ext {
     versionName = VERSION_NAME
     VERSION_CODE = 1
-    VSC = VSC_PATH
-    isCi = true
 }
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.getkeepsafe.dexcount'
 
 
 android {
 
-    compileSdkVersion compileSdkVer
-    buildToolsVersion buildToolsVer
+    namespace "com.exozet.sequentialimageplayer"
+    compileSdk compileSdkVer
+    buildToolsVersion = buildToolsVer
 
     defaultConfig {
-        minSdkVersion minSdkVer
-        targetSdkVersion targetSdkVer
-        versionCode isCi ? commitCount() : VERSION_CODE
-        versionName isCi ? simpleReleaseVersionName() : VERSION_NAME
-        vectorDrawables.useSupportLibrary = true
-        multiDexEnabled true
+        minSdk minSdkVer
+        targetSdk targetSdkVer
+
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
-
-        buildConfigField "String", "SIMPLE_VERSION_NAME", escape(simpleReleaseVersionName())
-        buildConfigField "String", "CANONICAL_VERSION_NAME", escape(canonicalReleaseVersionName())
-        buildConfigField "String", "COMMIT_HASH", escape(commitHash())
-        buildConfigField "String", "BRANCH", escape(branchNameByGit())
-        buildConfigField "String", "BUILD_DATE", escape(new Date().getTime())
-
-        // to avoid lib compile for release when app is compiled for debug: //http://stackoverflow.com/a/30134955/2736039
-        defaultPublishConfig 'release'
-        publishNonDefault true
     }
 
     buildTypes {
@@ -45,42 +30,57 @@ android {
         }
     }
 
-    // region compile options
+    buildFeatures {
+        viewBinding true
+    }
+
+    // region java compile options
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // endregion
+
+    // region kotlin compile options
+
+    kotlinOptions {
+        jvmTarget = "17"
+        allWarningsAsErrors = false
+        kotlinOptions.verbose = true
+
+        //## Hint: https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#default-methods-in-interfaces
+        //## Hint: "-Xjvm-default=all-compatibility" and "-Xjvm-default=all-compatibility" will also work.
+        freeCompilerArgs += [
+                "-Xjvm-default=all-compatibility",
+                // disable linting for opt-in annotations
+                "-opt-in=kotlin.RequiresOptIn"
+        ]
     }
 
     // endregion
 
     // region lint options
 
-    lintOptions {
-        disable 'InvalidPackage'
-        abortOnError false        // true by default
+    lint {
+        disable 'TypographyFractions', 'TypographyQuotes', 'InvalidPackage'
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        checkOnly 'NewApi', 'InlinedApi'
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        checkDependencies true
+        ignoreTestSources true
         checkAllWarnings false
-        checkReleaseBuilds false
-        ignoreWarnings true       // false by default
-        quiet true                // false by default
-        tasks.lint.enabled = false
-    }
-
-    // endregion
-
-    // region dex options
-
-    dexOptions {
-        javaMaxHeapSize "4g"
-        maxProcessCount 8
-    }
-
-    // endregion
-
-    // region adb options
-
-    adbOptions {
-        timeOutInMs 10 * 60 * 1000 // 10 minutes
     }
 
     // endregion
@@ -88,22 +88,25 @@ android {
     // region exclude duplicated meta inf files
 
     packagingOptions {
-        exclude 'META-INF/app_debug.kotlin_module'
-        exclude 'META-INF/library-core_release.kotlin_module'
+        // DebugProbesKt.bin is used for java debugging (not needed for android)
+        // Hint: https://github.com/Kotlin/kotlinx.coroutines/issues/2274
+        exclude 'DebugProbesKt.bin'
+
+        excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        // https://stackoverflow.com/a/61893957/1006741
+        excludes -= "/META-INF/*.kotlin_module"
     }
 
     // endregion
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation libs.kotlinJdk8
+    coreLibraryDesugaring desugaring.jdk
     implementation libs.supportAppCompat
     implementation libs.constraintLayout
 
     implementation libs.rx2java
     implementation libs.rx2Android
-    implementation libs.rx2Kotlin
 
     implementation libs.glide
     implementation libs.glideOkHttp3
@@ -114,14 +117,3 @@ dependencies {
 }
 
 // endregion
-
-def escape(Object value) {
-    return "\"" + value + "\""
-}
-
-configurations.all {
-    resolutionStrategy.cacheDynamicVersionsFor 10, 'minutes'
-}
-
-apply from: "${project.rootDir}/Android-Dependencies/javadoc.gradle"
-apply from: "${project.rootDir}/Android-Dependencies/bintray.gradle"
