@@ -2,10 +2,6 @@
 
 Native Sequential Image Player. Supports different FPS, auto play, and scrubbing forwards and backwards.
 
-[![Screenshot](demo.gif)](demo.gif)
-
-[![Screenshot](screenshot.png)](screenshot.png)
-
 <!-- TOC -->
 * [How to use](#how-to-use)
   * [As view](#as-view)
@@ -20,6 +16,10 @@ Native Sequential Image Player. Supports different FPS, auto play, and scrubbing
 * [Changelog](#changelog)
 * [Contributors](#contributors)
 <!-- TOC -->
+
+[![Screenshot](demo.gif)](demo.gif)
+
+[![Screenshot](screenshot.png)](screenshot.png)
 
 # How to use
 
