@@ -119,3 +119,16 @@ dependencies {
 }
 
 // endregion
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = "com.exozet"
+                artifactId = 'sequentialimageplayer'
+                version = VERSION_NAME
+            }
+        }
+    }
+}

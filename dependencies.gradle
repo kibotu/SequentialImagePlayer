@@ -20,7 +20,7 @@ ext {
 }
 
 ext.plugin = [
-        gradleBuildTools: "com.android.tools.build:gradle:8.7.2",
+        gradleBuildTools: "com.android.tools.build:gradle:8.7.3",
         kotlinGradle    : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
 ]
 
