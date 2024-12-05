@@ -1,6 +1,6 @@
-# SequentialImagePlayer [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21) [![Gradle Version](https://img.shields.io/badge/gradle-8.11.1-green.svg)](https://docs.gradle.org/current/release-notes)  [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-green.svg)](https://kotlinlang.org/) [![](https://jitpack.io/v/kibotu/mobile-sequential-image-player.svg)](https://jitpack.io/#kibotu/mobile-sequential-image-player)
+# SequentialImagePlayer [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21) [![Gradle Version](https://img.shields.io/badge/gradle-8.1.1-green.svg)](https://docs.gradle.org/current/release-notes)  [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-green.svg)](https://kotlinlang.org/) [![](https://jitpack.io/v/kibotu/mobile-sequential-image-player.svg)](https://jitpack.io/#kibotu/mobile-sequential-image-player)
 
-Native Sequential Image Player. Supports different fps, auto play and scrubbing for-/ and backwards.
+Native Sequential Image Player. Supports different FPS, auto play, and scrubbing forwards and backwards.
 
 [![Screenshot](demo.gif)](demo.gif)
 
@@ -23,7 +23,7 @@ Native Sequential Image Player. Supports different fps, auto play and scrubbing 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
@@ -41,15 +41,15 @@ private fun startSequentialPlayer(list: List<Uri>) = with(sequentialImagePlayer)
 }
 ```
 
-## As Standalone Activity    
+## As Standalone Activity
 
-Start 360 Degree Activity by passing bitmap file path for or an  bitmap
+Start 360 Degree Activity by passing a bitmap file path or a bitmap
 
 ```kotlin
 (1 until 192).map { parseAssetFile(String.format("stabilized/out%03d.png", it)) }.toTypedArray()
 
 SequentialImagePlayerActivity.Builder
-    .with(this)
+.with(this)
     .uris(list)
     .fps(24) // default: 30
     .playBackwards(false) // default: false
@@ -57,9 +57,9 @@ SequentialImagePlayerActivity.Builder
     .zoomable(true) // default: true
     .translatable(true) // default: true
     .showControls(true) // default: false
-    .swipeSpeed(0.8f) // default: 1
-    .blurLetterbox() // default: true
-    .startActivity()
+    .swipeSpeed(0.8f) // default: 1 
+    .blurLetterbox() // default:true 
+    .startActivity() 
 ```
 
 # How to install
@@ -114,6 +114,16 @@ pngquant app/src/main/assets/default/**.png --ext .png --force
 
 # Changelog
 
+2.0.0
+* Replaced kotlin extensions by view binding
+* Android 15 Support
+* Library Updates
+  * Kotlin 2.1.0 
+  * gradle wrapper update to 8.11.1
+  * gradle build tools to 8.7.2  
+  * gradle.settings overhaul
+  
+1.5.3
 * Supports onProgressChanged events, e.g.: onProgressChanged = { degreeIndicator.rotation = it * 360 }
 * Supports blurry letterbox effect
 * Supports being added as custom view
