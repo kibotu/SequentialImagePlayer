@@ -1,4 +1,6 @@
-# SequentialImagePlayer [![Android CI](https://github.com/kibotu/mobile-sequential-image-player/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/mobile-sequential-image-player/actions/workflows/android.yml) [![](https://jitpack.io/v/kibotu/mobile-sequential-image-player.svg)](https://jitpack.io/#kibotu/mobile-sequential-image-player) [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21) [![Gradle Version](https://img.shields.io/badge/gradle-8.11.1-green.svg)](https://docs.gradle.org/current/release-notes) [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-green.svg)](https://kotlinlang.org/) 
+# SequentialImagePlayer  
+
+[![Maven Central Version](https://img.shields.io/maven-central/v/net.kibotu/SequentialImagePlayer)](https://central.sonatype.com/artifact/net.kibotu/SequentialImagePlayer) [![](https://jitpack.io/v/kibotu/SequentialImagePlayer.svg)](https://jitpack.io/#kibotu/SequentialImagePlayer) [![Android CI](https://github.com/kibotu/SequentialImagePlayer/actions/workflows/android.yml/badge.svg)](https://github.com/kibotu/SequentialImagePlayer/actions/workflows/android.yml) [![API](https://img.shields.io/badge/Min%20API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21) [![API](https://img.shields.io/badge/Target%20API-35%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=35) [![API](https://img.shields.io/badge/Java-17-brightgreen.svg?style=flat)](https://www.oracle.com/java/technologies/javase/17all-relnotes.html) [![Gradle Version](https://img.shields.io/badge/gradle-8.11.1-green.svg)](https://docs.gradle.org/current/release-notes) [![Kotlin](https://img.shields.io/badge/kotlin-2.1.0-green.svg)](https://kotlinlang.org/)
 
 Native Sequential Image Player. Supports different FPS, auto play, and scrubbing forwards and backwards.
 
@@ -17,9 +19,9 @@ Native Sequential Image Player. Supports different FPS, auto play, and scrubbing
 * [Contributors](#contributors)
 <!-- TOC -->
 
-[![Screenshot](demo.gif)](demo.gif)
+[![Screenshot](docs/demo.gif)](docs/demo.gif)
 
-[![Screenshot](screenshot.png)](screenshot.png)
+[![Screenshot](docs/screenshot.png)](docs/screenshot.png)
 
 # How to use
 
