@@ -1,6 +1,5 @@
 ext {
     // refresh gradle dependencies: ./gradlew build --refresh-dependencies
-
     minSdkVer = 21
 
     compileSdkVer = 35
@@ -10,16 +9,17 @@ ext {
     // @see https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
     kotlinVersion = "2.1.0"
 
-    VERSION_NAME = 0
+    isJitpack = System.getenv("JITPACK") == "true"
 
-    major = 1
-    minor = 0
-    patch = 0
-
-    isCi = rootProject.hasProperty("CI") || rootProject.hasProperty("ci") || System.getenv().containsKey("CI")
+    println "Compile Version: $compileSdkVer"
+    println "Min SDK Version: $minSdkVer"
+    println "Target SDK Version: $targetSdkVer"
+    println "Kotlin: $kotlinVersion"
+    println "Version Name: $version"
 }
 
 ext.plugin = [
+        mavenCentralPublish: "com.vanniktech:gradle-maven-publish-plugin:0.30.0",
         gradleBuildTools: "com.android.tools.build:gradle:8.7.3",
         kotlinGradle    : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
 ]
