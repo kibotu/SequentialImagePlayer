@@ -23,6 +23,38 @@ Native Sequential Image Player. Supports different FPS, auto play, and scrubbing
 
 [![Screenshot](docs/screenshot.png)](docs/screenshot.png)
 
+# How to install
+
+## MavenCentral
+
+```groovy 
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation 'net.kibotu:SequentialImagePlayer:{latest-version}'
+}
+
+```
+
+## Jitpack
+
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.kibotu:SequentialImagePlayer:{latest-version}'
+}
+```
+
 # How to use
 
 ## As view
@@ -77,22 +109,6 @@ SequentialImagePlayerActivity.Builder
     .swipeSpeed(0.8f) // default: 1 
     .blurLetterbox() // default:true 
     .startActivity() 
-```
-
-# How to install
-
-```groovy
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-    }
-}
-
-dependencies {
-    implementation 'com.github.kibotu:SequentialImagePlayer:-SNAPSHOT'
-}
 ```
 
 # Misc
