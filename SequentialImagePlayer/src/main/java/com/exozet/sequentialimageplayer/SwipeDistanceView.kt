@@ -6,7 +6,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 
-internal open class SwipeDistanceView @JvmOverloads constructor(
+open class SwipeDistanceView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 

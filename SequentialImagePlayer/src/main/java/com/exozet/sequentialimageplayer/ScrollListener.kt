@@ -4,7 +4,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import kotlin.math.abs
 
-internal open class ScrollListener(
+open class ScrollListener(
     val width: () -> Int,
     val height: () -> Int,
     val onScroll: (percentX: Float, percentY: Float) -> Unit
